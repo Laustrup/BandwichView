@@ -11,10 +11,10 @@ public class ViewController {
                     _url = "http://www.localhost:8080/";
 
     @GetMapping("") public RedirectView preset() { return new RedirectView(_url+"welcome"); }
+    @GetMapping("welcome") public String welcome() { return _index; }
+    @GetMapping("profile") public String profile() { return _index; }
+    @GetMapping("dashboard") public String dashboard() { return _index; }
     @GetMapping("?search_query={query}") public String search() { return _index; }
     @GetMapping("?event={event}") public String event() { return _index; }
     @GetMapping("?user={user}") public String user() { return _index; }
-    @GetMapping("profile") public String profile() { return _index; }
-    @GetMapping("dashboard") public String dashboard() { return _index; }
-    @GetMapping("welcome") public String welcome() { return _index; }
 }
