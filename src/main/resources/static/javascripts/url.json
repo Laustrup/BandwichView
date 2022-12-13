@@ -8,9 +8,9 @@
     "welcome": "welcome",
     "profile": "profile",
     "dashboard" : "dashboard",
-    "search": "?search_query={query}",
-    "event": "?event={event}",
-    "user": "?user={user}"
+    "search": "dashboard/?search_query={query}",
+    "event": "?event={id}",
+    "user": "?user={id}"
   },
   "persistence": {
     "protocol": "http://",

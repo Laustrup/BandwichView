@@ -14,7 +14,7 @@ public class ViewController {
     @GetMapping("welcome") public String welcome() { return _index; }
     @GetMapping("profile") public String profile() { return _index; }
     @GetMapping("dashboard") public String dashboard() { return _index; }
-    @GetMapping("?search_query={query}") public String search() { return _index; }
-    @GetMapping("?event={event}") public String event() { return _index; }
-    @GetMapping("?user={user}") public String user() { return _index; }
+    @GetMapping("dashboard/?search_query={query}") public String search() { return _index; }
+    @GetMapping("?event={id}") public String event() { return _index; }
+    @GetMapping("?user={id}") public String user() { return _index; }
 }

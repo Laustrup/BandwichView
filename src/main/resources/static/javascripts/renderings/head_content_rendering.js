@@ -24,7 +24,7 @@ function renderHead() {
         `;
             break;
         }
-        case "/?search_query": {
+        case "/dashboard/?search_query": {
             head += `
         <title id="head_title">BANDWICH - search</title>
         `;
