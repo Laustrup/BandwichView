@@ -1,9 +1,10 @@
 function viewDomainURL() { return "http://localhost:8080/"; }
-function dashboardURL(searchQuery) {
-    return viewDomainURL() + "dashboard" + (searchQuery != null ? "/?search_query=" + searchQuery : "");
-}
-function profileURL() { return viewDomainURL() + "profile"; }
 function frontpageURL() { return viewDomainURL() + "welcome"}
+function profileURL() { return viewDomainURL() + "profile"; }
+function dashboardURL(searchQuery) {
+    return viewDomainURL() + "dashboard" + (searchQuery !== undefined ? "/?search_query=" + searchQuery : "");
+}
+function eventURL(id) { return viewDomainURL() + "/?event=" + id; }
 
 
 function apiDomainURL() { return "http://localhost:8081/api/"; }

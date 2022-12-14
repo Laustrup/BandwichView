@@ -165,7 +165,7 @@ async function signup(kind) {
                 break;
             }
         }
-        if (sessionStorage.getItem("user") != null)
+        if (sessionStorage.getItem("user") !== undefined)
             window.location.href = profileURL();
     }
 }
