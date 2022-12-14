@@ -20,7 +20,7 @@ function saveUser(user) {
     });
     saveChatRooms({
         chatRooms: user._chatRooms._data,
-        user: user,
+        id: "user_" + id
     });
     saveSubscription(user._subscription);
     saveBulletins(user._bulletins._data);
@@ -38,20 +38,6 @@ function saveUser(user) {
 
     const item = getUser();
     return item;
-}
-
-function getUser() {
-    let user = {
-        primaryId: undefined,
-        username: undefined,
-        description: undefined
-    };
-
-    user.primaryId = sessionStorage.getItem("user_id");
-    user.username = sessionStorage.getItem("username");
-    user.description = sessionStorage.getItem("description");
-
-    return user;
 }
 
 function saveContactInformation(item) {
@@ -78,26 +64,43 @@ function saveAlbums(item) {
             index = (item.index !== undefined ? item.index : i);
         sessionStorage.setItem(item.id + "_album_id_" + index, album._primaryId);
         sessionStorage.setItem(item.id + "_album_title_" + index, album._title);
-        saveAlbumItems(album);
-        saveAuthor(album);
+        saveAlbumItems({
+            album: album,
+            id: item.id + "_album",
+            index: i
+        });
+        saveAuthor({
+            user: album._author,
+            id: item.id + "_album",
+            index: i
+        });
         sessionStorage.setItem("album_timestamp_"+index,album._timestamp);
     }
     sessionStorage.setItem("album_amount",albums.length);
 }
 
-function saveAlbumItems(album) {
+function saveAlbumItems(item) {
+    const album = item.album;
     for (let i = 0; i < album._items.length; i++) {
         let item = album._items._data[i];
-        saveTags(item._tags._data);
-        sessionStorage.setItem(album._primaryId + "_item_endpoint",item._endpoint);
+        saveTags({
+            tag: item._tags._data,
+            id: item.id + "_album",
+            index: i
+        });
+        sessionStorage.setItem(item.id + "_item_endpoint_" + item.index, item._endpoint);
     }
-    sessionStorage.setItem(album._primaryId + "_item_amount",album._items._data.length);
+    sessionStorage.setItem(item.id + "_item_amount_" + item.index,album._items._data.length);
 }
 
 function saveTags(item) {
     for (let i = 0; i < item.length; i++)
-        saveAuthor(tag._author);
-    sessionStorage.setItem(item._endpoint + "_tags_length", item._tags._data.length)
+        saveAuthor({
+            user: item.tag._author,
+            id: item.id + "_tag",
+            index: i
+        });
+    sessionStorage.setItem(item.id + "_tags_length_" + item.index, item._tags._data.length)
 }
 
 function saveRatings(ratings) {
@@ -125,7 +128,8 @@ function saveRatings(ratings) {
     }
 }
 
-function saveEvents(events) {
+function saveEvents(item) {
+    const events = item.events;
     for (let i = 0; i < events.length; i++) {
         let event = events[i],
             id = item.id + "_event";
@@ -148,29 +152,34 @@ function saveEvents(events) {
         });
         saveGigs({
             gigs: event._gigs._data,
-            type: id,
+            id: id,
             index: i
         });
-        saveAuthor(event._venue);
+        saveAuthor({
+            user: event._venue,
+            type: "venue",
+            id: id,
+            index: i
+        });
         saveRequests({
            requests: event._requests._data,
-           type: id,
+           id: id,
            index: i
         });
         saveParticipations({
             participations: event._participations,
             event: event,
+            id: id,
             index: i
         });
         saveBulletins({
             bulletins: event._bulletins._data,
-            type: id,
+            id: id,
             index: i
         });
         saveAlbums({
             albums: event._albums._data,
-            type: id,
-            id: "event_id_" + event._primaryId,
+            id: id,
             index: i
         });
     }
@@ -181,29 +190,29 @@ function saveParticipations(item) {
     const participations = item.participations;
     for (let i = 0; i < participations.length; i++) {
         const participation = participations[i];
-        let type = "participation";
         saveAuthor({
-            author: participation._participant,
-            userKind: "participant",
-            type: type,
-            index: i
+            user: participation._participant,
+            type: "participant",
+            kind: "participation",
+            index: item.index,
+            id: item.id + "_participation"
         });
 
-        type += "_participation_" + participation._primaryId + "_" + participation._secondaryId;
-        sessionStorage.setItem(type + "_open_doors_"+i, item.event._openDoors);
-        sessionStorage.setItem(type + "_start_"+i, item.event._start);
-        sessionStorage.setItem(type + "_end_"+i, item.event._end);
-        sessionStorage.setItem(type + "_length_"+i, item.event._length);
-        sessionStorage.setItem(type + "_description_"+i, item.event._description);
-        sessionStorage.setItem(type + "_is_voluntary_"+i, item.event._voluntary._truth);
-        sessionStorage.setItem(type + "_is_public_"+i, item.event._public._truth);
-        sessionStorage.setItem(type + "_is_cancelled_"+i, item.event._cancelled._truth);
-        sessionStorage.setItem(type + "_is_sold_out_"+i, item.event._soldOut._truth);
-        sessionStorage.setItem(type + "_location_"+i, item.event._location);
-        sessionStorage.setItem(type + "_price_"+i, item.event._price);
-        sessionStorage.setItem(type + "_tickets_url_"+i, item.event._ticketsURL);
+        sessionStorage.setItem(id + "_id_" + item.index, item.event._primaryId);
+        sessionStorage.setItem(id + "_open_doors_" + item.index, item.event._openDoors);
+        sessionStorage.setItem(id + "_start_" + item.index, item.event._start);
+        sessionStorage.setItem(id + "_end_" + item.index, item.event._end);
+        sessionStorage.setItem(id + "_length_" + item.index, item.event._length);
+        sessionStorage.setItem(id + "_description_" + item.index, item.event._description);
+        sessionStorage.setItem(id + "_is_voluntary_" + item.index, item.event._voluntary._truth);
+        sessionStorage.setItem(id + "_is_public_" + item.index, item.event._public._truth);
+        sessionStorage.setItem(id + "_is_cancelled_" + item.index, item.event._cancelled._truth);
+        sessionStorage.setItem(id + "_is_sold_out_" + item.index, item.event._soldOut._truth);
+        sessionStorage.setItem(id + "_location_" + item.index, item.event._location);
+        sessionStorage.setItem(id + "_price_" + item.index, item.event._price);
+        sessionStorage.setItem(id + "_tickets_url_" + item.index, item.event._ticketsURL);
 
-        sessionStorage.setItem(type + "_type_"+i, participation._type);
+        sessionStorage.setItem(id + "_type_" + item.index, participation._type);
     }
     sessionStorage.setItem(item.event._primaryId + "_participations_amount",participations.length);
 }
@@ -212,19 +221,20 @@ function saveChatRooms(item) {
     const chatRooms = item.chatRooms;
     for (let i = 0; i < chatRooms; i++) {
         const chatRoom = chatRooms[i];
-        sessionStorage.setItem(item.user._primaryId + "_chat_room_id_"+i,chatRoom._primaryId);
+        sessionStorage.setItem(item.id + "_chat_room_id_"+i,chatRoom._primaryId);
         saveMails({
-            chatRoom: chatRoom,
-            user: item.user,
-            chatRooms: item.chatRooms,
+            mails: chatRoom._mails._data,
+            id: item.id + "_chat_room",
             index: i
         });
         saveChatters({
-            chatRoom: chatRoom,
-            chatRooms: chatRooms,
-            user: user,
             chatters: chatRoom._chatters._data,
+            id: item.id + "_chat_room",
             index: i
+        });
+        saveAuthor({
+           user: chatRoom._responsible,
+
         });
         sessionStorage.setItem("")
     }
