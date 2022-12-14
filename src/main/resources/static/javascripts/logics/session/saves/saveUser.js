@@ -23,7 +23,10 @@ function saveUser(user) {
         id: "user_" + id
     });
     saveSubscription(user._subscription);
-    saveBulletins(user._bulletins._data);
+    saveBulletins({
+        bulletins: user._bulletins._data,
+        id: "user_" + id
+    });
     saveIdols(user._idols._data);
     saveFans(user._fans._data);
     saveGigs(user._gigs._data);
@@ -82,13 +85,14 @@ function saveAlbums(item) {
 function saveAlbumItems(item) {
     const album = item.album;
     for (let i = 0; i < album._items.length; i++) {
-        let item = album._items._data[i];
+        const item = album._items._data[i],
+            index = item.index + "_" + i;
         saveTags({
             tag: item._tags._data,
             id: item.id + "_album",
             index: i
         });
-        sessionStorage.setItem(item.id + "_item_endpoint_" + item.index, item._endpoint);
+        sessionStorage.setItem(item.id + "_item_endpoint_" + index, item._endpoint);
     }
     sessionStorage.setItem(item.id + "_item_amount_" + item.index,album._items._data.length);
 }
@@ -131,20 +135,21 @@ function saveRatings(ratings) {
 function saveEvents(item) {
     const events = item.events;
     for (let i = 0; i < events.length; i++) {
-        let event = events[i],
-            id = item.id + "_event";
-        sessionStorage.setItem(id + "_open_doors_"+i, event._openDoors);
-        sessionStorage.setItem(id + "_start_"+i, event._start);
-        sessionStorage.setItem(id + "_end_"+i, event._end);
-        sessionStorage.setItem(id + "_length_"+i, event._length);
-        sessionStorage.setItem(id + "_description_"+i, event._description);
-        sessionStorage.setItem(id + "_is_voluntary_"+i, event._voluntary._truth);
-        sessionStorage.setItem(id + "_is_public_"+i, event._public._truth);
-        sessionStorage.setItem(id + "_is_cancelled_"+i, event._cancelled._truth);
-        sessionStorage.setItem(id + "_is_sold_out_"+i, event._soldOut._truth);
-        sessionStorage.setItem(id + "_location_"+i, event._location);
-        sessionStorage.setItem(id + "_price_"+i, event._price);
-        sessionStorage.setItem(id + "_tickets_url_"+i, event._ticketsURL);
+        const event = events[i],
+            id = item.id + "_event",
+            index = item.index + "_" + i;
+        sessionStorage.setItem(id + "_open_doors_" + index, event._openDoors);
+        sessionStorage.setItem(id + "_start_" + index, event._start);
+        sessionStorage.setItem(id + "_end_" + index, event._end);
+        sessionStorage.setItem(id + "_length_" + index, event._length);
+        sessionStorage.setItem(id + "_description_" + index, event._description);
+        sessionStorage.setItem(id + "_is_voluntary_" + index, event._voluntary._truth);
+        sessionStorage.setItem(id + "_is_public_" + index, event._public._truth);
+        sessionStorage.setItem(id + "_is_cancelled_" + index, event._cancelled._truth);
+        sessionStorage.setItem(id + "_is_sold_out_" + index, event._soldOut._truth);
+        sessionStorage.setItem(id + "_location_" + index, event._location);
+        sessionStorage.setItem(id + "_price_" + index, event._price);
+        sessionStorage.setItem(id + "_tickets_url_" + index, event._ticketsURL);
         saveContactInformation({
             info: event._contactInfo,
             id: id,
@@ -189,7 +194,8 @@ function saveEvents(item) {
 function saveParticipations(item) {
     const participations = item.participations;
     for (let i = 0; i < participations.length; i++) {
-        const participation = participations[i];
+        const participation = participations[i],
+            index = item.index + "_" + i;
         saveAuthor({
             user: participation._participant,
             type: "participant",
@@ -198,21 +204,20 @@ function saveParticipations(item) {
             id: item.id + "_participation"
         });
 
-        sessionStorage.setItem(id + "_id_" + item.index, item.event._primaryId);
-        sessionStorage.setItem(id + "_open_doors_" + item.index, item.event._openDoors);
-        sessionStorage.setItem(id + "_start_" + item.index, item.event._start);
-        sessionStorage.setItem(id + "_end_" + item.index, item.event._end);
-        sessionStorage.setItem(id + "_length_" + item.index, item.event._length);
-        sessionStorage.setItem(id + "_description_" + item.index, item.event._description);
-        sessionStorage.setItem(id + "_is_voluntary_" + item.index, item.event._voluntary._truth);
-        sessionStorage.setItem(id + "_is_public_" + item.index, item.event._public._truth);
-        sessionStorage.setItem(id + "_is_cancelled_" + item.index, item.event._cancelled._truth);
-        sessionStorage.setItem(id + "_is_sold_out_" + item.index, item.event._soldOut._truth);
-        sessionStorage.setItem(id + "_location_" + item.index, item.event._location);
-        sessionStorage.setItem(id + "_price_" + item.index, item.event._price);
-        sessionStorage.setItem(id + "_tickets_url_" + item.index, item.event._ticketsURL);
-
-        sessionStorage.setItem(id + "_type_" + item.index, participation._type);
+        sessionStorage.setItem(id + "_id_" + index, item.event._primaryId);
+        sessionStorage.setItem(id + "_open_doors_" + index, item.event._openDoors);
+        sessionStorage.setItem(id + "_start_" + index, item.event._start);
+        sessionStorage.setItem(id + "_end_" + index, item.event._end);
+        sessionStorage.setItem(id + "_length_" + index, item.event._length);
+        sessionStorage.setItem(id + "_description_" + index, item.event._description);
+        sessionStorage.setItem(id + "_is_voluntary_" + index, item.event._voluntary._truth);
+        sessionStorage.setItem(id + "_is_public_" + index, item.event._public._truth);
+        sessionStorage.setItem(id + "_is_cancelled_" + index, item.event._cancelled._truth);
+        sessionStorage.setItem(id + "_is_sold_out_" + index, item.event._soldOut._truth);
+        sessionStorage.setItem(id + "_location_" + index, item.event._location);
+        sessionStorage.setItem(id + "_price_" + index, item.event._price);
+        sessionStorage.setItem(id + "_tickets_url_" + index, item.event._ticketsURL);
+        sessionStorage.setItem(id + "_type_" + index, participation._type);
     }
     sessionStorage.setItem(item.event._primaryId + "_participations_amount",participations.length);
 }
@@ -220,8 +225,9 @@ function saveParticipations(item) {
 function saveChatRooms(item) {
     const chatRooms = item.chatRooms;
     for (let i = 0; i < chatRooms; i++) {
-        const chatRoom = chatRooms[i];
-        sessionStorage.setItem(item.id + "_chat_room_id_"+i,chatRoom._primaryId);
+        const chatRoom = chatRooms[i],
+            index = item.index + "_" + i;
+        sessionStorage.setItem(item.id + "_chat_room_id_" + index,chatRoom._primaryId);
         saveMails({
             mails: chatRoom._mails._data,
             id: item.id + "_chat_room",
@@ -233,28 +239,79 @@ function saveChatRooms(item) {
             index: i
         });
         saveAuthor({
-           user: chatRoom._responsible,
-
+            user: chatRoom._responsible,
+            id: item.id + "_chat_room",
+            kind: "chat_room_author",
+            index: i
         });
-        sessionStorage.setItem("")
+        sessionStorage.setItem(item.id + "_chat_room_answering_time_" + index, chatRoom._answeringTime);
+        sessionStorage.setItem(item.id + "_chat_room_is_answered_" + index, chatRoom._answered);
     }
-    sessionStorage.setItem(item.user._primaryId + "_chat_room_amount", chatRooms.length);
+    sessionStorage.setItem(item.id + "_chat_room_amount_" + item.index, chatRooms.length);
 }
 
 function saveMails(item) {
-
+    const mails = item.mails;
+    for (let i = 0; i < mails.length; i++) {
+        const mail = mails[i],
+            index = item.index + "_" + i;
+        sessionStorage.setItem(item.id + "_mail_id_" + index, mail._primaryId);
+        saveAuthor({
+            user: mail._author,
+            id: item.id + "_mail",
+            kind: "mail_author",
+            index: i
+        });
+        sessionStorage.setItem(item.id + "_mail_content_" + index, mail._content);
+        sessionStorage.setItem(item.id + "_mail_is_sent_" + index, mail._sent);
+        sessionStorage.setItem(item.id + "_mail_is_edited_" + index, mail._edited._argument);
+        sessionStorage.setItem(item.id + "_mail_is_public_" + index, mail._public)
+    }
+    sessionStorage.setItem(item.id + "_mail_amount_" + item.index, mails.length);
 }
 
 function saveChatters(item) {
-
+    const chatters = item.chatters;
+    for (let i = 0; i < chatters.length; i++) {
+        const chatter = chatters[i];
+        saveAuthor({
+            user: chatter,
+            id: item.id,
+            kind: "chatter",
+            index: i
+        });
+    }
+    sessionStorage.setItem(item.id + "_chatter_amount_" + item.index, chatters.length);
 }
 
 function saveSubscription(subscription) {
+    sessionStorage.setItem("subscription_type", subscription._type);
+    sessionStorage.setItem("subscription_status", subscription._status);
+    sessionStorage.setItem("subscription_price", subscription._price);
+    sessionStorage.setItem("subscription_offer_expires", subscription._offer._expires);
+    sessionStorage.setItem("subscription_offer_type", subscription._offer._type);
+    sessionStorage.setItem("subscription_offer_effect", subscription._offer._effect);
+    sessionStorage.setItem("subscription_card_id", subscription._cardId);
 
 }
 
-function saveBulletins(bulletins) {
-
+function saveBulletins(item) {
+    const bulletins = item.bulletins;
+    for (let i = 0; i < bulletins.length; i++) {
+        const bulletin = bulletins[i],
+            index = item.index + "_" + i;
+        sessionStorage.setItem(item.id + "_bulletin_id_" + index, bulletin._primaryId);
+        saveAuthor({
+            user: bulletin._author,
+            id: item.id + "_bulletin",
+            kind: "bulletin_author",
+            index: i
+        });
+        sessionStorage.setItem(item.id + "_bulletin_content_" + index, bulletin._content);
+        sessionStorage.setItem(item.id + "_bulletin_is_sent_" + index, bulletin._sent);
+        sessionStorage.setItem(item.id + "_bulletin_is_edited_" + index, bulletin._edited._argument);
+        sessionStorage.setItem(item.id + "_bulletin_is_public_" + index, bulletin._public)
+    }
 }
 
 function saveIdols(idols) {
