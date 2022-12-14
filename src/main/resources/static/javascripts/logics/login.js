@@ -1,10 +1,10 @@
-updateSession();
+updateSession().then();
 
 async function login() {
     let username = document.getElementById("username_login").value;
     let password = document.getElementById("password_login").value;
 
-    const response = await (await fetch(apiLoginURL(),{
+    const response = await (await fetch(apiLoginURL,{
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -17,14 +17,15 @@ async function login() {
     })).json();
 
     if (response==null) {
-        document.location.href = frontpageURL();
+        document.location.href = frontpageURL;
     } else {
-        sessionStorage.setItem("user",response._element);
-        document.location.href = profileURL();
+        saveUser(response);
+        sessionStorage.setItem("logged_in", "true")
+        document.location.href = profileURL;
     }
 }
 function logout() {
-    sessionStorage.removeItem("user");
+    sessionStorage.clear();
     document.getElementById("response_message").innerHTML = `
         <div>
             <p>
@@ -43,8 +44,8 @@ async function signup(kind) {
                     email: document.getElementById("user_email").value,
                     phone: {
                         country: {
-                            title: document.getElementById("country_title").value,
-                            indexes: document.getElementById("country_indexes").value,
+                            title: document.getElementById("phone_country_title").value,
+                            indexes: document.getElementById("phone_country_indexes").value,
                             phoneNumberDigits: document.getElementById("phone_number_digits").value
                         },
                         numbers: document.getElementById("user_phone_numbers").value,
@@ -59,7 +60,7 @@ async function signup(kind) {
                     country: {
                         title: document.getElementById("country_title").value,
                         indexes: document.getElementById("country_indexes").value,
-                        phoneNumberDigits: document.getElementById("phone_number_digits").value
+                        phoneNumberDigits: document.getElementById("number_digits").value
                     }
                 };
 
@@ -86,7 +87,7 @@ async function signup(kind) {
                 })).json();
 
                 if (response != null)
-                    sessionStorage.setItem("user",response);
+                    saveUser(response._element);
 
                 break;
             }
@@ -112,12 +113,12 @@ async function signup(kind) {
                 })).json();
 
                 if (response != null)
-                    sessionStorage.setItem("user",response);
+                    saveUser(response._element);
 
                 break;
             }
             case "BAND": {
-                if (sessionStorage.getItem("user") != null) {
+                if (getUser() !== undefined) {
                     const runner = document.getElementById("runner").value;
 
                     const response = await (await fetch(apiCreateBand(password),{
@@ -128,7 +129,7 @@ async function signup(kind) {
                         },
                         body: JSON.stringify({
                             _username: username,
-                            _members: [sessionStorage.getItem("user")],
+                            _members: getUser(),
                             _runner: runner,
                             _description: description,
                             _contactInfo: contactInformation
@@ -136,7 +137,9 @@ async function signup(kind) {
                     })).json();
 
                     if (response != null)
-                        sessionStorage.setItem("user",response);
+                        saveUser(response._element);
+                } else {
+                    alert("You need to be signed in as an Artist to create a band...");
                 }
                 break;
             }
@@ -160,18 +163,18 @@ async function signup(kind) {
                 })).json();
 
                 if (response != null)
-                    sessionStorage.setItem("user",response);
+                    saveUser(response._element);
 
                 break;
             }
         }
-        if (sessionStorage.getItem("user") !== undefined)
+        if (getUser() !== undefined)
             window.location.href = profileURL();
     }
 }
 
 async function updateSession() {
-    if (sessionStorage.getItem("user")!=null)
-        sessionStorage.setItem("user",(await (await fetch(apiUserGetURL(
-            sessionStorage.getItem("user")))).json())._element._id);
+    if (getUser() !== undefined)
+        saveUser((await (await fetch(apiUserGetURL(
+            sessionStorage.getItem("user")))).json())._element);
 }

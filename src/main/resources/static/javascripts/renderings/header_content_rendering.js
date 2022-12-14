@@ -11,7 +11,7 @@ function renderHeader() {
         `,
         rightSection = ``;
 
-    if (sessionStorage.getItem("user") == null) {
+    if (getUser() === undefined) {
         leftSection = `
             <section id="header_left">
                 <div class="wrapper">
@@ -40,7 +40,7 @@ function renderHeader() {
                 </a>
             </section> `;
     } else {
-        const user = sessionStorage.getItem("user");
+        const user = getUser();
 
         leftSection = `
             <section id="header_left">
@@ -65,7 +65,7 @@ function renderHeader() {
         rightSection = `
             <section id="header_right">
                 <a href="/profile" class="login_tag">` +
-                    user._username + `
+                    user.username + `
                 </a>
                 |
                 <a class="login_tag">
