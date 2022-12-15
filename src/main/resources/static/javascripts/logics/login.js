@@ -178,3 +178,7 @@ async function updateSession() {
         saveUser((await (await fetch(apiUserGetURL(
             sessionStorage.getItem("user")))).json())._element);
 }
+
+function userIsLoggedIn() {
+    return sessionStorage.getItem("logged_in") === "true";
+}
