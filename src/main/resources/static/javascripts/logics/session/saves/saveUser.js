@@ -5,6 +5,8 @@ function saveUser(user) {
     sessionStorage.setItem("username",user._username);
     if (user._firstName !== undefined)
         sessionStorage.setItem("firstname",user._firstName);
+    if (user._fullName !== undefined)
+        sessionStorage.setItem("fullname", user._fullName);
     if (user._lastName !== undefined)
         sessionStorage.setItem("lastname",user._lastName);
     sessionStorage.setItem("description",user._description);
@@ -81,28 +83,32 @@ function saveUser(user) {
 
 function saveContactInformation(item) {
     const index = (item.index !== undefined ? "_" + item.index : "");
-    sessionStorage.setItem(item.id + "_email" + index, item._email);
-    sessionStorage.setItem(item.id + "_phone_country_title" + index, item._phone._country._title);
-    sessionStorage.setItem(item.id + "_phone_country_indexes" + index, item._phone._country._indexes);
-    sessionStorage.setItem(item.id + "_phone_number_digits" + index, item._phone._country._firstPhoneNumberDigits);
-    sessionStorage.setItem(item.id + "_phone_numbers" + index, item._numbers);
-    sessionStorage.setItem(item.id + "_phone_is_mobile" + index, item._mobile);
-    sessionStorage.setItem(item.id + "_street" + index, item._street);
-    sessionStorage.setItem(item.id + "_floor" + index, item._floor);
-    sessionStorage.setItem(item.id + "_postal" + index, item._postal);
-    sessionStorage.setItem(item.id + "_city" + index, item._city);
-    sessionStorage.setItem(item.id + "_country_title" + index, item._country._title);
-    sessionStorage.setItem(item.id + "_country_indexes" + index, item._country._indexes);
-    sessionStorage.setItem(item.id + "_country_number_digits" + index, item._country._firstPhoneNumberDigits);
+    function generateKey(content) { return item.id + content + index; }
+
+    sessionStorage.setItem(generateKey("_email"), item._email);
+    sessionStorage.setItem(generateKey("_phone_country_title"), item._phone._country._title);
+    sessionStorage.setItem(generateKey("_phone_country_indexes"), item._phone._country._indexes);
+    sessionStorage.setItem(generateKey("_phone_number_digits"), item._phone._country._firstPhoneNumberDigits);
+    sessionStorage.setItem(generateKey("_phone_numbers"), item._numbers);
+    sessionStorage.setItem(generateKey("_phone_is_mobile"), item._mobile);
+    sessionStorage.setItem(generateKey("_street"), item._street);
+    sessionStorage.setItem(generateKey("_floor"), item._floor);
+    sessionStorage.setItem(generateKey("_postal"), item._postal);
+    sessionStorage.setItem(generateKey("_city"), item._city);
+    sessionStorage.setItem(generateKey("_country_title"), item._country._title);
+    sessionStorage.setItem(generateKey("_country_indexes"), item._country._indexes);
+    sessionStorage.setItem(generateKey("_country_number_digits"), item._country._firstPhoneNumberDigits);
 }
 
 function saveAlbums(item) {
     const albums = item.albums;
     for (let i = 0; i < albums.length; i++) {
-        const album = albums[i],
-            index = (item.index !== undefined ? item.index : i);
-        sessionStorage.setItem(item.id + "_album_id_" + index, album._primaryId);
-        sessionStorage.setItem(item.id + "_album_title_" + index, album._title);
+        function generateKey(content) {
+            return item.id + content + (item.index !== undefined ? item.index + "_" + i : i);
+        }
+
+        sessionStorage.setItem(generateKey("_album_id_"), album._primaryId);
+        sessionStorage.setItem(generateKey("_album_title_"), album._title);
         saveAlbumItems({
             album: album,
             id: item.id + "_album",
@@ -113,9 +119,9 @@ function saveAlbums(item) {
             id: item.id + "_album",
             index: i
         });
-        sessionStorage.setItem("album_timestamp_"+index,album._timestamp);
+        sessionStorage.setItem(generateKey("_album_timestamp_"),album._timestamp);
     }
-    sessionStorage.setItem("album_amount",albums.length);
+    sessionStorage.setItem(item.id + "_album_amount", (albums.length).toString());
 }
 
 function saveAlbumItems(item) {
@@ -130,7 +136,7 @@ function saveAlbumItems(item) {
         });
         sessionStorage.setItem(item.id + "_item_endpoint_" + index, item._endpoint);
     }
-    sessionStorage.setItem(item.id + "_item_amount_" + item.index,album._items._data.length);
+    sessionStorage.setItem(item.id + "_item_amount_" + item.index, (album._items._data.length).toString());
 }
 
 function saveTags(item) {
@@ -140,32 +146,22 @@ function saveTags(item) {
             id: item.id + "_tag",
             index: i
         });
-    sessionStorage.setItem(item.id + "_tags_length_" + item.index, item._tags._data.length)
+    sessionStorage.setItem(item.id + "_tags_length_" + item.index, (item._tags._data.length).toString())
 }
 
 function saveRatings(ratings) {
     for (let i = 0; i < ratings.length; i++) {
-        let rating = ratings[i];
-        let appointedId = rating._appointed._primaryId,
-            judgeId = rating._judge._primaryId;
-        let appointedIndex = (sessionStorage.getItem(appointedId + "_rating_appointed_amount") !== undefined ?
-                sessionStorage.getItem(appointedId + "_rating_appointed_amount") : 0),
-            judgeIndex = (sessionStorage.getItem(judgeId + "_rating_judge_amount") !== undefined ?
-                sessionStorage.getItem(judgeId + "_rating_judge_amount") : 0);
+        const rating = ratings[i];
 
-        sessionStorage.setItem(appointedId + "_rating_appointed_" + appointedIndex, rating._appointed._primaryId);
-        sessionStorage.setItem(appointedId + "_rating_appointed_value_" + appointedIndex, rating._value);
-        sessionStorage.setItem(appointedId + "_rating_appointed_comment_" + appointedIndex, rating._comment);
-        sessionStorage.setItem(appointedId + "_rating_appointed_amount", appointedIndex.toString());
-
-        sessionStorage.setItem(judgeId + "_rating_judge_" + judgeIndex, rating._judge._primaryId);
-        sessionStorage.setItem(judgeId + "_rating_judge_value_" + judgeIndex, rating._value);
-        sessionStorage.setItem(judgeId + "_rating_judge_comment_" + judgeIndex, rating._comment);
-        sessionStorage.setItem(judgeId + "_rating_judge_amount", judgeIndex.toString());
-
-        appointedIndex = 0;
-        judgeIndex = 0;
+        sessionStorage.setItem("rating_value_" + i, rating._value);
+        sessionStorage.setItem("rating_comment_" + i, rating._comment);
+        saveForeignUser({
+            user: rating._judge,
+            kind: "judge",
+            index: i
+        });
     }
+    sessionStorage.setItem("rating_amount", (ratings.length).toString());
 }
 
 function saveEvents(item) {
@@ -459,6 +455,8 @@ function saveForeignUser(item) {
     sessionStorage.setItem(id + "username_" + kind + type + index,user._username);
     if (user._firstName !== undefined)
         sessionStorage.setItem(id + "firstname_" + kind + type + index,user._firstName);
+    if (user._fullName !== undefined)
+        sessionStorage.setItem(id + "fullname" + kind + type + index, user._fullName);
     if (user._lastName !== undefined)
         sessionStorage.setItem(id + "lastname_" + kind + type + index,user._lastName);
     sessionStorage.setItem(id + "description_" + kind + type + index,user._description);
