@@ -1,10 +1,14 @@
 function saveUser(user) {
     const id = user._primaryId;
+
     sessionStorage.setItem("user_id",id);
     sessionStorage.setItem("username",user._username);
-    sessionStorage.setItem("firstname",user._firstName);
-    sessionStorage.setItem("lastname",user._lastName);
+    if (user._firstName !== undefined)
+        sessionStorage.setItem("firstname",user._firstName);
+    if (user._lastName !== undefined)
+        sessionStorage.setItem("lastname",user._lastName);
     sessionStorage.setItem("description",user._description);
+
     saveContactInformation({
         info: user._contactInfo,
         id: "user_" + id,
@@ -13,7 +17,8 @@ function saveUser(user) {
         albums: user._albums._data,
         id: "user_" + id
     });
-    saveRatings(user._ratings._data);
+    if (user._ratings._data !== undefined)
+        saveRatings(user._ratings._data);
     saveEvents({
         events: user._events._data,
         id: "user_" + id
@@ -23,24 +28,55 @@ function saveUser(user) {
         id: "user_" + id
     });
     saveSubscription(user._subscription);
-    saveBulletins({
-        bulletins: user._bulletins._data,
-        id: "user_" + id
-    });
-    saveIdols(user._idols._data);
-    saveFans(user._fans._data);
-    saveGigs(user._gigs._data);
-    saveBands(user._bands._data);
-    saveRunner(user._runner);
-    saveRequests(user._requests._data);
-    saveMembers(user._members._data);
-    saveLocation(user._location);
-    saveGearDescription(user._gearDescription);
-    saveSize(user._size);
+    if (user._bulletins._data !== undefined) {
+        saveBulletins({
+            bulletins: user._bulletins._data,
+            id: "user_" + id
+        });
+    }
+    if (user._idols._data !== undefined) {
+        saveIdols({
+            idols: user._idols._data,
+            id: "user_" + id
+        });
+    }
+    if (user._fans._data !== undefined) {
+        saveFans({
+            fans: user._fans._data,
+            id: "user_" + id
+        });
+    }
+    if (user._gigs._data !== undefined) {
+        saveGigs({
+            gigs: user._gigs._data,
+            id: "user_" + id
+        });
+    }
+    if (user._bands._data !== undefined) {
+        saveBands({
+            bands: user._bands._data,
+            id: "user_" + id
+        });
+    }
+
+    sessionStorage.setItem("runner",
+        (user._runner !== undefined ? user._runner :
+            user._gearDescription !== undefined ? user._gearDescription : undefined));
+
+    if (user._requests._data !== undefined)
+        saveRequests(user._requests._data);
+    if (user._members._data !== undefined) {
+        saveMembers({
+            members: user._members._data,
+            id: "user_" + id
+        });
+    }
+
+    sessionStorage.setItem("location", (user._location !== undefined ? user._location : undefined));
+    sessionStorage.setItem("size", (user._size !== undefined ? user._size : undefined));
     sessionStorage.setItem("timestamp",user._timestamp);
 
-    const item = getUser();
-    return item;
+    return getUser();
 }
 
 function saveContactInformation(item) {
@@ -72,7 +108,7 @@ function saveAlbums(item) {
             id: item.id + "_album",
             index: i
         });
-        saveAuthor({
+        saveForeignUser({
             user: album._author,
             id: item.id + "_album",
             index: i
@@ -99,7 +135,7 @@ function saveAlbumItems(item) {
 
 function saveTags(item) {
     for (let i = 0; i < item.length; i++)
-        saveAuthor({
+        saveForeignUser({
             user: item.tag._author,
             id: item.id + "_tag",
             index: i
@@ -160,16 +196,11 @@ function saveEvents(item) {
             id: id,
             index: i
         });
-        saveAuthor({
+        saveForeignUser({
             user: event._venue,
             type: "venue",
             id: id,
             index: i
-        });
-        saveRequests({
-           requests: event._requests._data,
-           id: id,
-           index: i
         });
         saveParticipations({
             participations: event._participations,
@@ -196,7 +227,7 @@ function saveParticipations(item) {
     for (let i = 0; i < participations.length; i++) {
         const participation = participations[i],
             index = item.index + "_" + i;
-        saveAuthor({
+        saveForeignUser({
             user: participation._participant,
             type: "participant",
             kind: "participation",
@@ -238,7 +269,7 @@ function saveChatRooms(item) {
             id: item.id + "_chat_room",
             index: i
         });
-        saveAuthor({
+        saveForeignUser({
             user: chatRoom._responsible,
             id: item.id + "_chat_room",
             kind: "chat_room_author",
@@ -256,7 +287,7 @@ function saveMails(item) {
         const mail = mails[i],
             index = item.index + "_" + i;
         sessionStorage.setItem(item.id + "_mail_id_" + index, mail._primaryId);
-        saveAuthor({
+        saveForeignUser({
             user: mail._author,
             id: item.id + "_mail",
             kind: "mail_author",
@@ -274,7 +305,7 @@ function saveChatters(item) {
     const chatters = item.chatters;
     for (let i = 0; i < chatters.length; i++) {
         const chatter = chatters[i];
-        saveAuthor({
+        saveForeignUser({
             user: chatter,
             id: item.id,
             kind: "chatter",
@@ -301,7 +332,7 @@ function saveBulletins(item) {
         const bulletin = bulletins[i],
             index = item.index + "_" + i;
         sessionStorage.setItem(item.id + "_bulletin_id_" + index, bulletin._primaryId);
-        saveAuthor({
+        saveForeignUser({
             user: bulletin._author,
             id: item.id + "_bulletin",
             kind: "bulletin_author",
@@ -314,51 +345,121 @@ function saveBulletins(item) {
     }
 }
 
-function saveIdols(idols) {
-
+function saveIdols(item) {
+    const idols = item.idols;
+    for (let i = 0; i < idols.length; i++) {
+        saveForeignUser({
+            user: idols[i],
+            id: item.id + "_idol",
+            index: i
+        })
+    }
+    sessionStorage.setItem(item.id + "_idol_amount", idols.length);
 }
 
-function saveFans(fans) {
-
+function saveFans(item) {
+    const fans = item.fans;
+    for (let i = 0; i < fans.length; i++) {
+        saveForeignUser({
+            user: fans[i],
+            id: item.id + "_fan",
+            index: i
+        })
+    }
+    sessionStorage.setItem(item.id + "_fan_amount", fans.length);
 }
 
-function saveGigs(gigs) {
-
+function saveGigs(item) {
+    const gigs = item.gigs;
+    for (let i = 0; i < gigs.length; i++) {
+        const gig = gigs[i];
+        const id = item.id + "_gig_" + gig._primaryId,
+            index = i;
+        sessionStorage.setItem(id + "_event_id" + index, gig._event._primaryId);
+        saveAct({
+            act: gig._act,
+            id: id,
+            index: index
+        });
+        sessionStorage.setItem(id + "_start_" + index, gig._start);
+        sessionStorage.setItem(id + "_end_" + index, gig._end);
+    }
+    sessionStorage.setItem(item.id + "_gigs_amount_" + item.index, gigs.length);
 }
 
-function saveBands(bands) {
-
+function saveAct(item) {
+    const act = item.act;
+    for (let i = 0; i < act.length; i++) {
+        saveForeignUser({
+            user: act[i],
+            id: item.id + "_act_" + act[i]._primaryId,
+            index: i
+        });
+    }
+    sessionStorage.setItem(item.id + "_acts_" + item.id, act.length);
 }
 
-function saveRunner(runner) {
-
+function saveBands(item) {
+    const bands = item.bands;
+    for (let i = 0; i < bands.length; i++) {
+        const id = item.id + "_band_" + bands[i]._primaryId;
+        saveForeignUser({
+            user: bands[i],
+            id: id,
+            index: i
+        });
+        saveMembers({
+            members: bands[i]._members._data,
+            id: id,
+            index: i
+        });
+    }
+    sessionStorage.setItem(item.id + "_bands_" + item.id, bands.length);
 }
 
 function saveRequests(requests) {
-
+    for (let i = 0; i < requests.length; i++) {
+        const request = requests[i];
+        sessionStorage.setItem("request_primary_id_" + i, request._primaryId);
+        sessionStorage.setItem("request_secondary_id_" + i, request._secondaryId);
+        saveEvents({
+            events: request._event,
+            id: "request_" + request._primaryId + "_" + request._secondaryId,
+            index: i
+        });
+        sessionStorage.setItem("request_approved_" + i, request._approved._argument);
+        sessionStorage.setItem("request_message_" + i, request._message);
+    }
+    sessionStorage.setItem("request_amount",requests.length);
 }
 
-function saveMembers(members) {
-
+function saveMembers(item) {
+    const members = item.members;
+    for (let i = 0; i < members.length; i++) {
+        const member = members[i];
+        saveForeignUser({
+            user: member,
+            type: "artist",
+            kind: (item.index === undefined ? "of_this_user" : ""),
+            id: item.id + "_" + member._primaryId,
+            index: item.index + "_" + i
+        });
+    }
+    sessionStorage.setItem(item.id + "_member_amount", members.length);
 }
 
-function saveLocation(location) {
+function saveForeignUser(item) {
+    const user = item.user,
+        kind = (item.kind === undefined ? "" : item.kind + "_"),
+        type = (item.type === undefined ? "" : item.type + "_"),
+        index = (item.index === undefined ? "" : item.index),
+        id = (item.id === undefined ? "" : item.id + "_");
 
-}
-
-function saveGearDescription(gear) {
-
-}
-
-function saveSize(size) {
-
-}
-
-function saveAuthor(item) {
-
-}
-
-
-function getAuthor(id) {
-
+    sessionStorage.setItem(id + "id_" + kind + type + index, user._primaryId);
+    sessionStorage.setItem(id + "username_" + kind + type + index,user._username);
+    if (user._firstName !== undefined)
+        sessionStorage.setItem(id + "firstname_" + kind + type + index,user._firstName);
+    if (user._lastName !== undefined)
+        sessionStorage.setItem(id + "lastname_" + kind + type + index,user._lastName);
+    sessionStorage.setItem(id + "description_" + kind + type + index,user._description);
 }
