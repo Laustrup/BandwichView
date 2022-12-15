@@ -13,5 +13,6 @@ function renderScripts() {
 <script src="../static/javascripts/logics/login.js"></script>
 <script src="../static/javascripts/logics/liszt.js"></script>
 <script src="../static/javascripts/logics/session/saves/saveUser.js"></script>
+<script src="../static/javascripts/logics/session/gets/getUser.js"></script>
     `;
 }
