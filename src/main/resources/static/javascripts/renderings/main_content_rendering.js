@@ -3,11 +3,19 @@ renderMain();
 function renderMain() {
     let url = window.location.href.split("=");
     switch (url[0]) {
-        case frontpageURL(): {
+        case frontpageURL: {
             renderFrontpage();
             break;
         }
-        case profileURL(): {
+        case loginURL: {
+            renderLogin();
+            break;
+        }
+        case signupURL: {
+            renderSignup();
+            break;
+        }
+        case profileURL: {
             renderProfile();
             break;
         }
@@ -21,11 +29,11 @@ function renderMain() {
             renderDashboard();
             break;
         }
-        case (viewDomainURL() + "/?event"): {
+        case (viewDomainURL + "/?event"): {
             renderEvent(url[1]);
             break;
         }
-        case (viewDomainURL() + "/?user"): {
+        case (viewDomainURL + "/?user"): {
             renderUser(url[1]);
             break;
         }
@@ -50,6 +58,65 @@ function renderFrontpage() {
         </div>
     
     `;
+}
+
+function renderLogin() {
+    if (!userIsLoggedIn()) {
+        let content = `
+            <section id="login_field_section">
+                <div class="wrapper">
+                    <label id="username">Title:</label>
+                    <input type="text" id="username" placeholder="username/email...">
+                    
+                    <label id="password">Password:</label>
+                    <input type="password" id="password" placeholder="password">
+                </div>
+            </section>
+            <section id="login_buttons">
+                <div class="wrapper">
+                    <button onclick="renderFrontpage()" class="return_button">
+                        Go back
+                    </button>
+                    <button onclick="login()" class="action_button">
+                        Log in
+                    </button>
+                </div>
+            </section>
+        `;
+
+        document.getElementById("main_content").innerHTML = `
+            <div class="wrapper">
+                <section id="login_title_section">
+                    <div class="wrapper">
+                        <h4 class="title">
+                            Login |
+                        </h4>
+                        <p class="description">
+                            Fill the fields in order to login.
+                            The title can either your username or Email.
+                        </p>
+                    </div>
+                </section>
+                <section id="login_content_section">
+                    <div class="wrapper">
+                        ${content}
+                    </div>
+                </section>
+                <section id="login_info_section">
+                    <div class="wrapper">
+                        <div class="response_message"></div>
+                    </div>
+                </section>
+            </div>
+        `;
+    } else {
+        renderProfile();
+    }
+}
+
+let userType;
+function renderSignup() {
+
 }
 
 function renderProfile() {

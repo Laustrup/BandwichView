@@ -1,8 +1,8 @@
 updateSession().then();
 
 async function login() {
-    let username = document.getElementById("username_login").value;
-    let password = document.getElementById("password_login").value;
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
 
     const response = await (await fetch(apiLoginURL,{
         method: 'POST',
@@ -16,24 +16,37 @@ async function login() {
         })
     })).json();
 
-    if (response==null) {
-        document.location.href = frontpageURL;
+    if (response === undefined) {
+        document.getElementById("response_message").innerHTML = `
+            <p class="body_text">
+                Response to server didn't have a success...
+            </p>
+        `;
+    } else if (response._message !== undefined) {
+        document.getElementById("response_message").innerHTML = `
+            <p class="body_text">
+                ${response._message}
+            </p>
+        `;
     } else {
         saveUser(response);
         sessionStorage.setItem("logged_in", "true")
+        document.getElementById("response_message").innerHTML = `
+            <p class="body_text">
+                Congrats ${response._username}. You have logged in!
+            </p>
+        `;
         document.location.href = profileURL;
     }
 }
 function logout() {
     sessionStorage.clear();
     document.getElementById("response_message").innerHTML = `
-        <div>
-            <p>
-                You have logged out!
-            </p>
-        </div>
+        <p class="body_text">
+            You have logged out!
+        </p>
     `;
-    document.location.href = 'http://localhost:8080/welcome';
+    document.location.href = frontpageURL;
 }
 async function signup(kind) {
     if (kind !== "") {
