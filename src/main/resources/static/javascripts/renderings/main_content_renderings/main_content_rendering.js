@@ -60,65 +60,6 @@ function renderFrontpage() {
     `;
 }
 
-function renderLogin() {
-    if (!userIsLoggedIn()) {
-        let content = `
-            <section id="login_field_section">
-                <div class="wrapper">
-                    <label id="username">Title:</label>
-                    <input type="text" id="username" placeholder="username/email...">
-                    
-                    <label id="password">Password:</label>
-                    <input type="password" id="password" placeholder="password">
-                </div>
-            </section>
-            <section id="login_buttons">
-                <div class="wrapper">
-                    <button onclick="renderFrontpage()" class="return_button">
-                        Go back
-                    </button>
-                    <button onclick="login()" class="action_button">
-                        Log in
-                    </button>
-                </div>
-            </section>
-        `;
-
-        document.getElementById("main_content").innerHTML = `
-            <div class="wrapper">
-                <section id="login_title_section">
-                    <div class="wrapper">
-                        <h4 class="title">
-                            Login |
-                        </h4>
-                        <p class="description">
-                            Fill the fields in order to login.
-                            The title can either your username or Email.
-                        </p>
-                    </div>
-                </section>
-                <section id="login_content_section">
-                    <div class="wrapper">
-                        ${content}
-                    </div>
-                </section>
-                <section id="login_info_section">
-                    <div class="wrapper">
-                        <div class="response_message"></div>
-                    </div>
-                </section>
-            </div>
-        `;
-    } else {
-        renderProfile();
-    }
-}
-
-let userType;
-function renderSignup() {
-
-}
-
 function renderProfile() {
     let html = ``;
     if (sessionStorage.getItem("logged_in") !== undefined)
@@ -128,7 +69,7 @@ function renderProfile() {
 
     document.getElementById("main_content").innerHTML = `
         <div class="wrapper">
-            ` + html + `
+            ${html}
         </div>
     
     `;
@@ -143,7 +84,7 @@ function renderDashboard() {
 
     document.getElementById("main_content").innerHTML = `
         <div class="wrapper">
-            ` + html + `
+            ${html}
         </div>
     
     `;
@@ -158,7 +99,7 @@ function renderEvent(id) {
 
     document.getElementById("main_content").innerHTML = `
         <div class="wrapper">
-            ` + html + `
+            ${html}
         </div>
     
     `;
@@ -173,7 +114,7 @@ function renderUser(id) {
 
     document.getElementById("main_content").innerHTML = `
         <div class="wrapper">
-            ` + html + `
+            ${html}
         </div>
     
     `;

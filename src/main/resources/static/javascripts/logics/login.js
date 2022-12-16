@@ -48,20 +48,22 @@ function logout() {
     `;
     document.location.href = frontpageURL;
 }
-async function signup(kind) {
+async function signup() {
+    const kind = document.getElementById("kind").value;
+
     if (kind !== "") {
         const username = document.getElementById("username").value,
                 password = document.getElementById("password").value,
-                description = document.getElementById("user_description").value,
+                description = document.getElementById("description").value,
                 contactInformation = {
-                    email: document.getElementById("user_email").value,
+                    email: document.getElementById("email").value,
                     phone: {
                         country: {
-                            title: document.getElementById("phone_country_title").value,
-                            indexes: document.getElementById("phone_country_indexes").value,
-                            phoneNumberDigits: document.getElementById("phone_number_digits").value
+                            title: document.getElementById("country_title").value,
+                            indexes: document.getElementById("country_indexes").value,
+                            phoneNumberDigits: document.getElementById("first_phone_number_digits").value
                         },
-                        numbers: document.getElementById("user_phone_numbers").value,
+                        numbers: document.getElementById("phone_numbers").value,
                         isMobile: document.getElementById("is_mobile").value
                     },
                     address: {
@@ -73,17 +75,16 @@ async function signup(kind) {
                     country: {
                         title: document.getElementById("country_title").value,
                         indexes: document.getElementById("country_indexes").value,
-                        phoneNumberDigits: document.getElementById("number_digits").value
+                        phoneNumberDigits: document.getElementById("first_phone_number_digits").value
                     }
                 };
 
         switch (kind) {
-            case "VENUE": {
-                const location = document.getElementById("user_location").value,
-                    gearDescription = document.getElementById("user_gear_description").value,
-                    size = document.getElementById("venue_size");
+            case "PARTICIPANT": {
+                const firstname = document.getElementById("first_name").value,
+                    lastname = document.getElementById("last_name").value;
 
-                const response = await (await fetch(apiCreateVenue(password),{
+                const response = await (await fetch(apiCreateArtist(password),{
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -91,10 +92,9 @@ async function signup(kind) {
                     },
                     body: JSON.stringify({
                         _username: username,
+                        _firstName: firstname,
+                        _lastName: lastname,
                         _description: description,
-                        _location: location,
-                        _gearDescription: gearDescription,
-                        _size: size,
                         _contactInfo: contactInformation
                     })
                 })).json();
@@ -105,8 +105,8 @@ async function signup(kind) {
                 break;
             }
             case "ARTIST": {
-                const firstname = document.getElementById("user_first_name").value,
-                    lastname = document.getElementById("user_last_name").value,
+                const firstname = document.getElementById("first_name").value,
+                    lastname = document.getElementById("last_name").value,
                     runner = document.getElementById("runner").value;
 
                 const response = await (await fetch(apiCreateArtist(password),{
@@ -156,11 +156,12 @@ async function signup(kind) {
                 }
                 break;
             }
-            case "PARTICIPANT": {
-                const firstname = document.getElementById("user_first_name").value,
-                    lastname = document.getElementById("user_last_name").value;
+            case "VENUE": {
+                const location = document.getElementById("location").value,
+                    gearDescription = document.getElementById("gear_description").value,
+                    size = document.getElementById("venue_size");
 
-                const response = await (await fetch(apiCreateArtist(password),{
+                const response = await (await fetch(apiCreateVenue(password),{
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -168,9 +169,10 @@ async function signup(kind) {
                     },
                     body: JSON.stringify({
                         _username: username,
-                        _firstName: firstname,
-                        _lastName: lastname,
                         _description: description,
+                        _location: location,
+                        _gearDescription: gearDescription,
+                        _size: size,
                         _contactInfo: contactInformation
                     })
                 })).json();
@@ -181,8 +183,10 @@ async function signup(kind) {
                 break;
             }
         }
-        if (getUser() !== undefined)
+        if (getUser() !== undefined) {
+            sessionStorage.setItem("logged_in", "true");
             window.location.href = profileURL();
+        }
     }
 }
 
