@@ -36,8 +36,7 @@ function renderLogin() {
         `;
 
         document.getElementById("main_content").innerHTML = `
-            <div class="wrapper">
-                <section id="login_title_section">
+            <section id="login_title_section">
                     <div class="wrapper">
                         <h4 class="title">
                             Login |
@@ -48,6 +47,7 @@ function renderLogin() {
                         </p>
                     </div>
                 </section>
+                <hr>
                 <section id="login_content_section">
                     <div class="wrapper">
                         ${content}
@@ -57,8 +57,7 @@ function renderLogin() {
                     <div class="wrapper">
                         <div class="response_message"></div>
                     </div>
-                </section>
-            </div>
+            </section>
         `;
     } else {
         renderProfile();
@@ -115,6 +114,7 @@ function renderSignup() {
                         </p>
                     </div>
                 </section>
+                <hr>
                 <section id="login_content_section">
                     <div class="wrapper">
                         ${content}

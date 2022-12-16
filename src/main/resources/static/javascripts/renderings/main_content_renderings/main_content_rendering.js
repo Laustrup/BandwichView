@@ -1,10 +1,10 @@
-renderMain();
+await renderMain();
 
-function renderMain() {
+async function renderMain() {
     let url = window.location.href.split("=");
     switch (url[0]) {
         case frontpageURL: {
-            renderFrontpage();
+            await renderFrontpage();
             break;
         }
         case loginURL: {
@@ -45,21 +45,6 @@ async function search(query) {
     sessionStorage.setItem("search", await (await fetch(apiSearchURL(query))).json())
 }
 
-function renderFrontpage() {
-    let html = ``;
-    if (sessionStorage.getItem("logged_in") !== undefined)
-        html = ``;
-    else
-        html = ``;
-
-    document.getElementById("main_content").innerHTML = `
-        <div class="wrapper">
-            ` + html + `
-        </div>
-    
-    `;
-}
-
 function renderProfile() {
     let html = ``;
     if (sessionStorage.getItem("logged_in") !== undefined)
@@ -68,10 +53,7 @@ function renderProfile() {
         html = ``;
 
     document.getElementById("main_content").innerHTML = `
-        <div class="wrapper">
-            ${html}
-        </div>
-    
+        ${html}
     `;
 }
 
@@ -83,10 +65,7 @@ function renderDashboard() {
         html = ``;
 
     document.getElementById("main_content").innerHTML = `
-        <div class="wrapper">
-            ${html}
-        </div>
-    
+        ${html}
     `;
 }
 
@@ -98,10 +77,7 @@ function renderEvent(id) {
         html = ``;
 
     document.getElementById("main_content").innerHTML = `
-        <div class="wrapper">
-            ${html}
-        </div>
-    
+        ${html}
     `;
 }
 
@@ -113,9 +89,6 @@ function renderUser(id) {
         html = ``;
 
     document.getElementById("main_content").innerHTML = `
-        <div class="wrapper">
-            ${html}
-        </div>
-    
+        ${html}
     `;
 }

@@ -36,3 +36,6 @@ function apiCreateArtist(password) {
 function apiCreateBand(password) {
     return apiDomainURL + "band/create/" + password;
 }
+function apiEventGet(id) {
+    return apiDomainURL + "event/get" + (id !== undefined ? "/" + id : "");
+}
