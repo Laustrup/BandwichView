@@ -1,6 +1,10 @@
 const viewDomainURL = "http://localhost:8080/";
-const frontpageURL = viewDomainURL + "welcome",
-    profileURL = viewDomainURL + "profile";
+const
+    aboutURL = viewDomainURL + "about",
+    frontpageURL = viewDomainURL + "welcome",
+    profileURL = viewDomainURL + "profile",
+    loginURL = viewDomainURL + "log_in",
+    signupURL = viewDomainURL + "sign_up";
 
 function dashboardURL(searchQuery) {
     return viewDomainURL + "dashboard" + (searchQuery !== undefined ? "?search_query=" + searchQuery : "");

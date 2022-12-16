@@ -12,8 +12,11 @@ public class ViewController {
 
     @GetMapping("") public String preset() { return "redirect://"+_url+"welcome"; }
     @GetMapping("welcome") public String welcome() { return _index; }
+    @GetMapping("about") public String about() { return _index; }
     @GetMapping("profile") public String profile() { return _index; }
     @GetMapping("dashboard") public String dashboard() { return _index; }
+    @GetMapping("log_in") public String login() { return _index; }
+    @GetMapping("sign_up") public String signup() { return _index; }
     @GetMapping("dashboard/?search_query={query}")
     public String search(@PathVariable(name = "query") String searchQuery) { return _index; }
     @GetMapping("?chat_room={id}")
