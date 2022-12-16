@@ -23,6 +23,12 @@ async function renderMain() {
             renderDashboard();
             break;
         }
+        case viewDomainURL + "/?chat_room": {
+            if (sessionStorage.getItem("logged_id") !== undefined)
+                await renderChatRoom();
+            else
+                return renderFrontpage("You need to log in for viewing chat room page");
+        }
         case (dashboardURL() + "/?search_query"): {
             if (sessionStorage.getItem("search") !== url[1])
                 search(url[1]);

@@ -1,16 +1,14 @@
-async function renderFrontpage() {
+async function renderFrontpage(message) {
     if (sessionStorage.getItem("logged_in") !== undefined)
         window.location.href = profileURL;
     else {
-        const events = await (await fetch(apiEventGet(), {
+        let events = await (await fetch(apiEventGet(), {
             method: "POST"
         })).json();
 
         events.filter((event) => {
-            return event._isCancelled === false;
-        });
-        events.filter((event) => {
-            return Date.now().toString() <= Date.parse((event._openDoors).toString())
+            return event._isCancelled === false &&
+                Date.now().toEpochMilli() <= Date.parse((event._openDoors).toString()).toEpochMilli();
         });
 
         let eventContainers = ``;
@@ -42,6 +40,7 @@ async function renderFrontpage() {
                     </p>
                 </section>
                 <section id="frontpage_message_section">
+                    ${(message !== undefined ? `<p class="body_text">${message}</p>` : `` )}
                     <div id="response_message"></div>
                 </section>
             </section>

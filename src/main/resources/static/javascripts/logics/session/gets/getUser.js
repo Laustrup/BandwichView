@@ -306,6 +306,7 @@ function getChatRooms(item) {
 
         chatRooms.push({
             id: sessionStorage.getItem(generateKey("_chat_room_id_")),
+            title: sessionStorage.getItem(generateKey("_chat_room_title_")),
             mails: getMails({
                 id: item.id + "_chat_room",
                 index: i
@@ -332,7 +333,7 @@ function getMails(item) {
 
     for (let i = 0; i < parseInt(sessionStorage.getItem(item.id + "_mail_amount_" + item.index)); i++) {
         const id = item.id,
-            index = item.index + "_" + i;
+            index = (item.index !== undefined ? item.index + "_" + i : "");
         function generateKey(content) { return id + content + index; }
 
         mails.push({

@@ -275,6 +275,7 @@ function saveChatRooms(item) {
         function generateKey(content) { return id + content + index; }
 
         sessionStorage.setItem(generateKey("_chat_room_id_"), chatRoom._primaryId);
+        sessionStorage.setItem(generateKey("_chat_room_title_"), chatRoom._title)
         saveMails({
             mails: chatRoom._mails._data,
             id: item.id + "_chat_room",
@@ -303,7 +304,7 @@ function saveMails(item) {
     for (let i = 0; i < mails.length; i++) {
         const mail = mails[i],
             id = item.id,
-            index = item.index + "_" + i;
+            index = (item.index !== undefined ? item.index + "_" + i : "");
         function generateKey(content) { return id + content + index; }
 
         sessionStorage.setItem(generateKey("_mail_id_"), mail._primaryId);
@@ -333,7 +334,7 @@ function saveChatters(item) {
             index: i
         });
     }
-    sessionStorage.setItem(item.id + "_chatter_amount_" + item.index, chatters.length);
+    sessionStorage.setItem(item.id + "_chatter_amount" + (item.index !== undefined ? "_" + item.index : ""), chatters.length);
 }
 
 function saveSubscription(subscription) {
