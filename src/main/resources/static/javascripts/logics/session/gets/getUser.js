@@ -346,7 +346,8 @@ function getMails(item) {
             content: sessionStorage.getItem(generateKey("_mail_content_")),
             isSent: sessionStorage.getItem(generateKey("_mail_is_sent_")),
             isEdited: sessionStorage.getItem(generateKey("_mail_is_edited_")),
-            isPublic: sessionStorage.getItem(generateKey("_mail_is_public_"))
+            isPublic: sessionStorage.getItem(generateKey("_mail_is_public_")),
+            timestamp: sessionStorage.getItem(generateKey("_timestamp_"))
         });
     }
 

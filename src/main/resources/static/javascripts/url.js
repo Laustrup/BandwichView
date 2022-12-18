@@ -20,7 +20,9 @@ function userURL(id) {
 }
 
 const apiDomainURL = "http://localhost:8081/api/";
-const apiLoginURL = apiDomainURL + "user/login";
+const apiLoginURL = apiDomainURL + "user/login",
+    apiChatRoomUpsert = apiDomainURL + "chat_room/upsert";
+
 function apiUserGetURL(id) {
     return apiDomainURL + "user/get/" + id;
 }

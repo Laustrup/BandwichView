@@ -317,7 +317,8 @@ function saveMails(item) {
         sessionStorage.setItem(generateKey("_mail_content_"), mail._content);
         sessionStorage.setItem(generateKey("_mail_is_sent_"), mail._sent);
         sessionStorage.setItem(generateKey("_mail_is_edited_"), mail._edited._argument);
-        sessionStorage.setItem(generateKey("_mail_is_public_"), mail._public)
+        sessionStorage.setItem(generateKey("_mail_is_public_"), mail._public);
+        sessionStorage.setItem(generateKey("_timestamp_"), mail._timestamp);
     }
     sessionStorage.setItem(item.id + "_mail_amount_" + item.index, mails.length);
 }
