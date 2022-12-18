@@ -4,15 +4,37 @@ async function sendMessage() {
     let chatRoom = getChosenChatRoom();
 
     const user = getUser();
-    chatRoom.mails.push({
-        _chatRoom: chatRoom,
-        _author: user,
-        _content: message,
-        _sent: true,
-        _edited: constructPlato({boolean: false}),
-        _public: isPublic,
-        _timestamp: Date.now()
+    chatRoom.mails.push(convertMailToAPI({
+        chatRoom: chatRoom,
+        author: user,
+        content: message,
+        sent: true,
+        edited: constructPlato({boolean: false}),
+        public: isPublic,
+        timestamp: Date.now()
+    }));
+    await fetch(apiChatRoomUpsert, convertChatRoomToAPI(chatRoom));
+}
+
+async function editMessage(id) {
+    const message = document.getElementById(id + "_message_content").value,
+        isPublic = document.getElementById(id + "_is_public").value;
+    let chatRoom = getChosenChatRoom(),
+        editedChatRoom;
+
+    const user = getUser();
+    chatRoom.mails.forEach((mail) => {
+        editedChatRoom.push(mail.id === id ? {
+            chatRoom: chatRoom,
+            author: user,
+            content: message,
+            sent: true,
+            edited: constructPlato({boolean: true}),
+            public: isPublic,
+            timestamp: mail.timestamp
+        } : editedChatRoom.push(mail));
     });
+
     const response = (await (await fetch(apiChatRoomUpsert, convertChatRoomToAPI(chatRoom))).json())._element;
 
     saveChatRooms({
@@ -21,18 +43,37 @@ async function sendMessage() {
     });
 }
 
-async function editMessage(id) {
-
-}
-
+//TODO Get responsible without calling api.
+//TODO Be able to create multiple chatters.
 async function createChatRoom() {
     const title = document.getElementById("title").value,
         message = document.getElementById("new_message_content").value,
-        isPublic = document.getElementById("is_public").value;
-    let chatRoom = getChosenChatRoom();
+        isPublic = document.getElementById("is_public").value,
+        chatters = document.getElementById("chatters").value;
 
     const responsible = (await (await fetch(apiUserGetURL(
         document.getElementById("responsible_id").value))).json())._element;
+
+    const user = getUser();
+    await fetch(apiChatRoomUpsert, convertChatRoomToAPI({
+        id: undefined,
+        title: title,
+        mails: [{
+            chatRoom: {
+                title: title,
+                chatters: chatters,
+                responsible: responsible
+            },
+            author: user,
+            content: message,
+            sent: true,
+            edited: constructPlato({boolean: false}),
+            public: isPublic,
+            timestamp: Date.now()
+        }],
+        chatters: chatters,
+        responsible: responsible
+    }));
 }
 
 function saveDraft(draft) { sessionStorage.setItem(draft.id + "_draft",draft.message); }
@@ -96,6 +137,7 @@ function getChosenChatRoom() {
 function convertChatRoomFromAPI(chatRoom) {
     return {
         id: chatRoom._id,
+        title: chatRoom._title,
         mails: chatRoom._mails,
         chatters: chatRoom._chatters,
         responsible: chatRoom._responsible,
@@ -106,10 +148,23 @@ function convertChatRoomFromAPI(chatRoom) {
 function convertChatRoomToAPI(chatRoom) {
     return {
         _id: chatRoom.id,
+        _title: chatRoom.title,
         _mails: chatRoom.mails,
         _chatters: chatRoom.chatters,
         _responsible: chatRoom._responsible,
         _answeringTime: chatRoom.answeringTime,
         _answered: chatRoom.isAnswered
+    }
+}
+
+function convertMailToAPI(mail) {
+    return {
+        _chatRoom: mail.chatRoom,
+        _author: mail.author,
+        _content: mail.content,
+        _sent: mail.isSent,
+        _edited: mail.isEdited,
+        _public: mail.isPublic,
+        _timestamp: mail.timestamp
     }
 }

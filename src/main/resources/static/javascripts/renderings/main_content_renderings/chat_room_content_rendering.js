@@ -88,7 +88,9 @@ function generateRightSection() {
             </p>
         ` : `` );
         const messageField = (mail.author.id === user.id ? `
-            <input type="text" value="mail.content" class="message_content" id="${mail.id}" placeholder="Rewrite content">
+            <input type="text" value="mail.content" class="message_content" id="${mail.id}_message_content" placeholder="Rewrite content">
+            <label for="is_public">Is public:</label>
+            <input type="checkbox" value="${mail.isPublic}" id="${mail.id}_is_public">
             <p class="small_text">
                 Written: ${mail.timestamp}
             </p>
