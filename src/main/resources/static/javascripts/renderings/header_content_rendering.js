@@ -10,8 +10,8 @@ function renderHeader() {
             </section>
         `,
         rightSection = ``;
-
-    if (getUser() === undefined) {
+    const user = getUser();
+    if (user === undefined) {
         leftSection = `
             <section id="header_left">
                 <div class="wrapper">
@@ -38,8 +38,6 @@ function renderHeader() {
                 </a>
             </section> `;
     } else {
-        const user = getUser();
-
         leftSection = `
             <section id="header_left">
                 <div class="wrapper">
@@ -79,13 +77,8 @@ function renderHeader() {
         `;
     }
 
-    document.getElementById("header_content").innerHTML = `
-        <div class="wrapper">
-            ` +
+    document.getElementById("header_content").innerHTML =
             leftSection +
             midSection +
-            rightSection +
-        `
-        </div>
-    `;
+            rightSection;
 }

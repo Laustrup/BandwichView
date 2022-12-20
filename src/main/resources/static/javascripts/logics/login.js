@@ -191,7 +191,8 @@ async function signup() {
 }
 
 async function updateSession() {
-    if (getUser() !== undefined)
+    const user = getUser();
+    if (user !== undefined)
         saveUser((await (await fetch(apiUserGetURL(
             sessionStorage.getItem("user")))).json())._element);
 }

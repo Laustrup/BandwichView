@@ -1,5 +1,5 @@
 async function renderFrontpage(message) {
-    if (sessionStorage.getItem("logged_in") !== undefined)
+    if (sessionStorage.getItem("logged_in") !== "true")
         window.location.href = profileURL;
     else {
         let events = await (await fetch(apiEventGet(), {
