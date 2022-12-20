@@ -5,6 +5,7 @@ function renderHead() {
         <!-- Head -->
         `;
     let endpoint = window.location.pathname.split('=')
+    console.log(endpoint)
     switch (endpoint[0]) {
         case "/welcome": {
             head += `

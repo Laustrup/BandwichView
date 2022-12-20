@@ -1,4 +1,4 @@
-await renderMain();
+renderMain();
 
 async function renderMain() {
     let url = window.location.href.split("=");
