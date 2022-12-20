@@ -1,5 +1,5 @@
 async function renderFrontpage(message) {
-    if (sessionStorage.getItem("logged_in") !== "true")
+    if (userIsLoggedIn())
         window.location.href = profileURL;
     else {
         let events = await (await fetch(apiEventGet(), {
@@ -50,9 +50,7 @@ async function renderFrontpage(message) {
                     Events
                 </h3>
                 <div class="container_box">
-                    <div class="wrapper">
                         ${eventContainers}
-                    </div>
                 </div>
             </section>
         `;

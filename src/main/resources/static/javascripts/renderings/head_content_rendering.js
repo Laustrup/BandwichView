@@ -1,73 +1,38 @@
 renderHead();
 
 function renderHead() {
-    let head = `
-        <!-- Head -->
-        `;
-    let endpoint = window.location.pathname.split('=')
-    console.log(endpoint)
+    let head = ``,
+        endpoint = window.location.pathname.split('=');
+    console.log("Current endpoint", endpoint);
     switch (endpoint[0]) {
         case "/welcome": {
-            head += `
-        <title id="head_title">BANDWICH</title>
-        `;
+            head = "Bandwich";
             break;
         }
         case "/profile": {
-            head += `
-        <title id="head_title">BANDWICH - logged in</title>
-        `;
+            head = "BANDWICH - logged in";
             break;
         }
         case "/dashboard": {
-            head += `
-        <title id="head_title">BANDWICH - dashboard</title>
-        `;
+            head = "BANDWICH - dashboard";
             break;
         }
         case "/dashboard/?search_query": {
-            head += `
-        <title id="head_title">BANDWICH - search</title>
-        `;
+            head = "BANDWICH - search";
             break;
         }
         case "/?event": {
-            head += `
-        <title id="head_title">BANDWICH - event</title>
-        `;
+            head = "BANDWICH - event";
             break;
         }
         case "/?user": {
-            head += `
-        <title id="head_title">BANDWICH - user</title>
-        `;
+            head = "BANDWICH - user";
             break;
         }
         default: {
-            head += `
-        <title id="head_title">BANDWICH - error</title>
-        `;
+            head = "BANDWICH";
             break;
         }
     }
-    head += `
-        <link href="../static/images/shortcut_icon.PNG" type="image/PNG" rel="shortcut icon">
-    `;
-    document.getElementById("head_content").innerHTML = `
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-        <!-- Styles -->
-        <link href="../static/styles/sheets/global.css" rel="stylesheet">
-        <link href="../static/styles/sheets/fonts.css" rel="stylesheet">
-        <link href="../static/styles/sheets/containers.css" rel="stylesheet">
-        <link href="../static/styles/sheets/buttons.css" rel="stylesheet">
-        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet">
-    
-        ` + head;
+    document.getElementById("head_title").innerHTML = `${head}`;
 }
