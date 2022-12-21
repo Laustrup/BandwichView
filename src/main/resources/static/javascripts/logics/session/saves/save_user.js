@@ -11,6 +11,7 @@ function saveUser(user) {
         if (user._lastName !== undefined)
             sessionStorage.setItem("lastname",user._lastName);
         sessionStorage.setItem("description",user._description);
+        sessionStorage.setItem("authority",user._authority)
 
         saveContactInformation({
             info: user._contactInfo,

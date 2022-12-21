@@ -1,6 +1,7 @@
-renderMain();
+await renderMain();
 
 async function renderMain() {
+    clearSearch();
     let url = window.location.href.split("=");
     switch (url[0]) {
         case frontpageURL: {
@@ -20,7 +21,7 @@ async function renderMain() {
             break;
         }
         case dashboardURL(): {
-            renderDashboard();
+            await renderDashboard();
             break;
         }
         case viewDomainURL + "/?chat_room": {
@@ -46,24 +47,7 @@ async function renderMain() {
     }
 }
 
-async function search(query) {
-    window.location.href = dashboardURL(query);
-    sessionStorage.setItem("search", await (await fetch(apiSearchURL(query))).json())
-}
-
 function renderProfile() {
-    let html = ``;
-    if (sessionStorage.getItem("logged_in") !== undefined)
-        html = ``;
-    else
-        html = ``;
-
-    document.getElementById("main_content").innerHTML = `
-        ${html}
-    `;
-}
-
-function renderDashboard() {
     let html = ``;
     if (sessionStorage.getItem("logged_in") !== undefined)
         html = ``;

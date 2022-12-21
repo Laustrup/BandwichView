@@ -8,6 +8,7 @@ function getUser() {
             fullname: sessionStorage.getItem("fullname"),
             lastname: sessionStorage.getItem("lastname"),
             description: sessionStorage.getItem("description"),
+            authority: sessionStorage.getItem("authority"),
             contactInfo: getContactInformation({ id: "user_" + id }),
             albums: getAlbums({ id: "user_" + id }),
             ratings: getRatings({ id: id }),

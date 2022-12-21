@@ -41,3 +41,8 @@ function apiCreateBand(password) {
 function apiEventGet(id) {
     return apiDomainURL + "event/get" + (id !== undefined ? "/" + id : "");
 }
+
+async function changeURL(url) {
+    window.location.href = url;
+    await renderMain();
+}
