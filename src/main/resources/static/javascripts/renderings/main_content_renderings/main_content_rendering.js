@@ -29,6 +29,7 @@ async function renderMain() {
                 await renderChatRoom();
             else
                 return renderFrontpage("You need to log in for viewing chat room page");
+            break;
         }
         case (dashboardURL() + "/?search_query"): {
             if (sessionStorage.getItem("search") !== url[1])
@@ -45,18 +46,6 @@ async function renderMain() {
             break;
         }
     }
-}
-
-function renderProfile() {
-    let html = ``;
-    if (sessionStorage.getItem("logged_in") !== undefined)
-        html = ``;
-    else
-        html = ``;
-
-    document.getElementById("main_content").innerHTML = `
-        ${html}
-    `;
 }
 
 function renderEvent(id) {

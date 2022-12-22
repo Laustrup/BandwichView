@@ -273,6 +273,11 @@ function generateSearchItemContainers(items) {
     return containers;
 }
 
+function generateBulletinContent(user) {
+
+}
+
+//TODO Implement image generating
 async function generateImage(item) {
 
 }
