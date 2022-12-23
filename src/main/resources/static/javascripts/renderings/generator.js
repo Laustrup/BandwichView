@@ -165,115 +165,149 @@ function generateFilterSection() {
     `
 }
 
-function generateIdolsContainers() {
-    return userContainers(getIdols({id: "user_" + id }));
-}
+function generateIdolsContainers() { return userContainers(getIdols({id: "user_" + id })); }
 
 function generateAttendingEventContainers() {
-    return eventContainers(getEvents({ id: "user_" + sessionStorage.getItem("user_id") }));
-}
-
-//TODO Filter only if necessarily
-function eventContainers(events) {
-    events.filter((event) => {
-        return event._isCancelled === false &&
-            Date.now().toEpochMilli() <= Date.parse((event._openDoors).toString()).toEpochMilli();
-    });
-
-    let html = ``;
-
-    events.forEach((event) => {
-        html += `
-            <div class="container">
-                <div class="wrapper">
-                    <a onclick="${changeURL(eventURL(event._id))}" class="container_a_tag">
-                        ${generateImage({
-                            endpoint: event._albums._data[0]._items._data[0]._endpoint,
-                            class: "container_image"
-                        })}
-                        <h5 class="container_title">${event._title}</h5>
-                        <p class="container_body_text">
-                            Doors opens at: ${event._openDoors.toLocaleString()}
-                        </p>
-                        <p class="container_body_text">
-                            Location: ${event._location}
-                        </p>
-                    </a>
-                </div>
-            </div>
-            
-        `;
-    });
-
-    return html;
-}
-
-function userContainers(users) {
-    let html = ``;
-
-    users.forEach((user) => {
-        html += `
-            <div class="container">
-                <div class="wrapper">
-                    <a onclick="${changeURL(userURL(user._id))}" class="container_a_tag">
-                        ${generateImage({
-                            endpoint: event._albums._data[0]._items._data[0]._endpoint,
-                            class: "container_image"
-                        })}
-                        <h5 class="container_title">${user._username}</h5>
-                    </a>
-                </div>
-            </div>
-        `;
-    })
-
-    return html;
-}
-
-function generateGigContainers() {
-    const gigs = getGigs({ id: "user_" + sessionStorage.getItem("user_id") });
-
-    gigs.filter((gig) => {
-        return  Date.now().toEpochMilli() <= Date.parse((gig.start).toString()).toEpochMilli();
-    });
-
-    let gigContainers = ``;
-
-    gigs.forEach((gig) => {
-        gigContainers += `
-            <div class="container">
-                <div class="wrapper">
-                    <h5 class="container_title">${gig.title}</h5>
-                    <p class="container_body_text">
-                        Doors opens at: ${gig.start.toLocaleString()}
-                    </p>
-                    <p class="container_body_text">
-                        Location: ${gig.event.title}
-                    </p>
-                </div>
-            </div>
-            
-        `;
+    return eventContainers({
+        events: getEvents({ id: "user_" + sessionStorage.getItem("user_id") }),
+        onlyOccurring: document.getElementById("onlyOccurring").value
     });
 }
 
 async function generateEventContainers() {
     return eventContainers(await (await fetch(apiEventGet(), {
-        method: "POST"
+        method: "POST",
+        onlyOccurring: false
     })).json());
 }
 
+function eventContainers(item) {
+    let events = item.events;
+
+    if (item.onlyOccurring)
+        events.filter((event) => {
+            return event._isCancelled === false &&
+                Date.now().toEpochMilli() <= Date.parse(event._openDoors).toEpochMilli();
+        });
+
+    return generateItemContainers({
+        elements: events,
+        kind: "EVENT",
+        titleClassTag: "container_title"
+    });
+}
+
+function userContainers(users) {
+    return generateItemContainers({
+        elements: users,
+        titleClassTag: "container_title"
+    });
+}
+
+function generateGigContainers() {
+    const gigs = getGigs({ id: "user_" + sessionStorage.getItem("user_id") });
+    gigs.filter((gig) => {
+        return  Date.now().toEpochMilli() <= Date.parse((gig.start).toString()).toEpochMilli();
+    });
+
+    return generateItemContainers({
+        elements: getGigs({ id: "user_" + sessionStorage.getItem("user_id") }),
+        kind: "GIGS"
+    });
+}
+
+
 function generateSearchItemContainers(items) {
+    return generateItemContainers({
+        elements: items,
+        kind: "SEARCH",
+        titleClassTag: "search_item_title"
+    });
+}
+
+function generateBulletinContent(bulletins) {
+    return generateItemContainers({
+        elements: bulletins,
+        kind: "BULLETINS"
+    });
+}
+
+function generateItemContainers(item) {
     let containers = ``;
-    items.forEach((element) => {
+    item.elements.forEach((element) => {
         containers += `
-            <div></div>
-        `;
+            <div class="${item.kind ? "bulletin_container" : "container"}">
+                <div class="wrapper">
+                    ${(item.kind !== "BULLETINS" || item.kind !== "GIGS" 
+                    || ((element.isPublic !== undefined ? element.isPublic : element._isPublic)
+                    || item.isOwnBulletin) ? 
+                    `<a href="${changeURL((element._authority === "EVENT" ? eventURL(element._id) : userURL(element._id) ))}">
+                        ${generateImage({
+                            endpoint: (element._albums._data[0]._items._data[0]._endpoint !== undefined ?
+                                            element._albums._data[0]._items._data[0]._endpoint
+                                                : element.albums._data[0]._items._data[0]._endpoint),
+                            class: "container_image"
+                            }
+                        )}
+                        <h5 class="${item.titleClassTag}">
+                            ${(
+                                element._authority === "EVENT" ||  element._authority === "VENUE" ?
+                                    (element._title !== undefined ? element._title : element.title)
+                                        : element._username !== undefined ? element._username : element.username
+                            )}
+                        </h5>
+                        ${(item.kind === "EVENT" ? `
+                        <p class="container_body_text">
+                            Doors opens at: ${ new Date(element._openDoors )}
+                        </p>
+                        <p class="container_body_text">
+                            Location: ${element._location}
+                        </p>
+                        ` : ``)}
+                    </a>` : (element.kind === "BULLETINS" ? 
+                        ((element.isSent !== undefined ? element.isSent : element._isSent) ? `
+                        ${generateImage({
+                            endpoint: (element._albums._data[0]._items._data[0]._endpoint !== undefined ?
+                                    element._albums._data[0]._items._data[0]._endpoint
+                                        : element.albums._data[0]._items._data[0]._endpoint),
+                            class: "bulletin_container_image"
+                            }
+                        )}
+                        <h5 class="${item.titleClassTag}">
+                            ${(element.author.username !== undefined ? element.author.username : element._author._username)}
+                        </h5>
+                        <p class="date_description">
+                            Written ${new Date((element.timestamp !== undefined ? element.timestamp : element._timestamp))}
+                        </p>
+                        <p class="bulletin_content">
+                            ${(element.content !== undefined ? element.content : element._content)}
+                        </p>
+                        ${(((element.isEdited !== undefined ? element.isEdited === "true" : element._isEdited === "true") ? `
+                        <p class="notifying_description">
+                            Is edited
+                        </p>
+                        ` : ``))}
+                        ` : ``) : element.kind === "GIGS" ? `
+                        <h5 class="container_title">${element.event.title}</h5>
+                        <p class="container_body_text">
+                            Gig begins at: ${new Date(element.start)}
+                        </p>
+                        <p class="container_body_text">
+                            Location: ${element.event.location}
+                        </p>
+                        ` : ``))}
+                </div>
+            </div>
+            `;
     });
     return containers;
 }
 
-function generateBulletinContent(user) {
+function generateFollowingContent(user) {
+
+}
+
+function generateAlbumContainers(user) {
 
 }
 
