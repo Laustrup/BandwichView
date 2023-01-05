@@ -59,8 +59,8 @@ async function renderEvent(items) {
                                 <input type="datetime-local" id="open_doors" value="${Date.parse(event._openDoors.toString())}">
                                 <label for="price">Price:</label>
                                 <input type="number" id="price" value="${event._price}">
-                                <label for="ticketURL">Ticket URL:</label>
-                                <input type="text" id="ticketURL" value="${event._ticketsURL}">
+                                <label for="tickets_url">Ticket URL:</label>
+                                <input type="text" id="tickets_url" value="${event._ticketsURL}">
                             </div>
                             <div id="contact_editing">
                                 <h5 class="title">Contact information</h5>
@@ -94,11 +94,13 @@ async function renderEvent(items) {
                                 <label for="size">Size:</label>
                                 <input type="text" id="size" value="${event._size}">
                             </div>
-                            <button onclick="editEvent()">Edit</button>
+                            <button onclick="${await editEvent(event._primaryId)}">Edit</button>
                         </div>
                     </section>
                 </section>
                 <section id="add_gig_section">
+                    <h5 class="title">Here you can add a gig to the event</h5>
+                    <p id="gig_response_message"></p>                    
                     <label for="act_id">Act:</label>
                     <input type="text" list="act_id" onchange="${await changeActDatalist(this)}" placeholder="Write an artist or band...">
                     <datalist id="act_id"></datalist>
@@ -106,7 +108,12 @@ async function renderEvent(items) {
                     <input type="datetime-local" id="gig_start">
                     <label for="gig_end">End:</label>
                     <input type="datetime-local" id="gig_end">
-                    <button onclick="addGig()">Add gig</button>
+                    <button onclick="${addGig(event)}">Add gig</button>
+                </section>
+                <section id="delete_section">
+                    <h5>Do you wish to delete the event?</h5>
+                    <p id="event_delete_response_message"></p>
+                    <button onclick="${await deleteEvent(event._primaryId)}">Delete</button>
                 </section>
             `;
         }

@@ -92,7 +92,7 @@ async function editUser() {
     else if (response._error)
         document.getElementById("editing_message").innerText = response._message;
     else
-        document.getElementById("editing_message").innerText = "Something went wrong..."
+        document.getElementById("editing_message").innerText = "Something went wrong...";
 }
 
 async function approveRequest(request) {
@@ -136,4 +136,137 @@ async function changeParticipation(participation) {
     else
         document.getElementById("participation_request_message").innerText = response._message === undefined ?
             "Something went wrong..." : response._message;
+}
+
+async function editEvent(id) {
+    const title = document.getElementById("title").value,
+        description = document.getElementById("description").value,
+        openDoors = document.getElementById("open_doors").value,
+        price = document.getElementById("price").value,
+        ticketsURL = document.getElementById("tickets_url").value,
+        email = document.getElementById("email").value,
+        number = document.getElementById("phone_number").value,
+        isMobile = document.getElementById("is_mobile").value,
+        city = document.getElementById("city").value,
+        street = document.getElementById("city").value,
+        floor = document.getElementById("floor").value,
+        postal = document.getElementById("postal").value,
+        countryTitle = document.getElementById("country").value,
+        location = document.getElementById("location").value,
+        size = document.getElementById("size").value;
+
+    //TODO Country details along rest of other event values
+    const event = {
+        _id: id,
+        _title: title,
+        _openDoors: openDoors,
+        _price: price,
+        _ticketsURL: ticketsURL,
+        _firstname: firstname,
+        _lastname: lastname,
+        _description: description,
+        _contactInfo: {
+            _email: email,
+            _phone: {
+                _country: {
+                    _title: countryTitle,
+                    _indexes: localStorage.getItem("user_" + id + "_phone_country_indexes"),
+                    _firstDigits: localStorage.getItem("user_" + id + "_phone_number_digits")
+                },
+                _numbers: number,
+                _isMobile: isMobile
+            },
+            _address: {
+                _city: city,
+                _street: street,
+                _floor: floor,
+                _postal: postal
+            },
+            _country: {
+                _title: countryTitle,
+                _indexes: localStorage.getItem("user_" + id + "_phone_country_indexes"),
+                _firstDigits: localStorage.getItem("user_" + id + "_phone_number_digits")
+            }
+        },
+        _requests: getRequests({id: "user_" + id}),
+        _location: location,
+        _size: size
+    };
+
+    const response = await (await (fetch(apiEventUpdate(), {
+        method: 'PATCH',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
+    }))).json();
+
+    if (response._error)
+        document.getElementById("editing_message").innerText = response._message;
+    else
+        document.getElementById("editing_message").innerText = "Something went wrong...";
+}
+
+async function addGig(event) {
+    const act = [(await (await fetch(apiUserGetURL(document.getElementById("act_id")).value,{
+        method: `POST`,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }})))._element],
+        start = document.getElementById("gig_start").value,
+        end = document.getElementById("gig_end").value;
+
+    event._gigs.push({
+        _act: act,
+        _start: start,
+        _end: end
+    });
+    const response = await (await fetch(apiEventUpdate(),{
+        method: `POST`,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
+    }));
+
+    if (!response._error)
+        await updateSession();
+    else
+        document.getElementById("gig_response_message").innerText = response._message === undefined ?
+            "Something went wrong..." : response._message;
+}
+
+async function deleteEvent(id) {
+    const response = await (await fetch(apiEventDelete(id),{
+        method: `DELETE`,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }));
+
+    if (response._element.truth)
+        await renderFrontpage("Delete was a success!");
+    else
+        document.getElementById("event_delete_response_message").innerText =
+            response._message === undefined ? "Something went wrong..." : response._message;
+}
+
+async function deleteUser(id) {
+    const response = await (await fetch(apiUserDelete(id),{
+        method: `DELETE`,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }));
+
+    if (response._element.truth)
+        await renderFrontpage("Delete was a success!");
+    else
+        document.getElementById("user_delete_response_message").innerText =
+            response._message === undefined ? "Something went wrong..." : response._message;
 }

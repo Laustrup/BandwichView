@@ -29,6 +29,9 @@ function apiUserGetURL(id) {
 function apiUserEditURL(update) {
     return apiDomainURL + "user/update/" + update.username + "/" + update.confirmationPassword + "/" + update.newPassword;
 }
+function apiUserDelete(id) {
+    return apiDomainURL + "user/" + (id === undefined ? "delete" : id);
+}
 function apiSearchURL(searchQuery) {
     return apiDomainURL + "user/search/" + searchQuery;
 }
@@ -46,6 +49,9 @@ function apiEventGet(id) {
 }
 function apiEventUpdate() {
     return apiDomainURL + "event/update";
+}
+function apiEventDelete(id) {
+    return apiDomainURL + "event/" + (id === undefined ? "delete" : id);
 }
 function apiParticipationUpsert() {
     return apiDomainURL + "event/upsert/participations";

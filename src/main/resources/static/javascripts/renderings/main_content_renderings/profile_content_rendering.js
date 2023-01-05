@@ -76,6 +76,11 @@ async function renderProfile(profileContent) {
                             </div>
                         </div>
                     </section>
+                    <section id="delete_section">
+                        <h5>Do you wish to delete your account?</h5>
+                        <p id="user_delete_response_message"></p>
+                        <button onclick="${deleteUser(user.id)}">Delete</button>
+                    </section>
                 </section>
             `;
         }
