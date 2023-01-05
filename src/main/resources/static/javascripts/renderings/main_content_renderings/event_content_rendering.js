@@ -61,6 +61,8 @@ async function renderEvent(items) {
                                 <input type="number" id="price" value="${event._price}">
                                 <label for="tickets_url">Ticket URL:</label>
                                 <input type="text" id="tickets_url" value="${event._ticketsURL}">
+                                <label for="public">Public:</label>
+                                <input type="checkbox" id="public" value="${event._public._truth}">
                             </div>
                             <div id="contact_editing">
                                 <h5 class="title">Contact information</h5>

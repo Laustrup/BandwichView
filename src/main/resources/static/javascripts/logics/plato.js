@@ -7,6 +7,13 @@ function constructPlato(values) {
     };
 }
 
+function booleanPlato(boolean) {
+    return {
+        argument: (boolean === true ? "TRUE" : "UNDEFINED"),
+        truth: boolean
+    }
+}
+
 function convertPlatoFromAPI(plato) {
     return {
         argument: plato._argument,

@@ -115,6 +115,64 @@ async function renderProfile(profileContent) {
             ` : `<h4 class="title">You don't have any requests at the moment...</h4>`;
         }
 
+        async function generateCreateEventContent() {
+            return `
+                <section id="event_creation_section">
+                    <div id="name_section">
+                        <h5 class="title">Name and description</h5>
+                        <label for="title">Title:</label>
+                        <input type="text" id="title" placeholder="Jazz show...">
+                        <label for="description">Description:</label>
+                        <input type="text" id="description" placeholder="This is a jazz show...">
+                    </div>
+                    <div id="practical_section">
+                        <label for="open_doors">Open doors:</label>
+                        <input type="datetime-local" id="open_doors">
+                        <label for="price">Price:</label>
+                        <input type="number" id="price">
+                        <label for="tickets_url">Ticket URL:</label>
+                        <input type="text" id="tickets_url" placeholder="billetlugen.dk">
+                        <label for="public">Public:</label>
+                        <input type="checkbox" id="public">
+                    </div>
+                    <div id="contact_section">
+                        <h5 class="title">Contact information</h5>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" placeholder="something@mail.com">
+                        <div id="phone_section">
+                            <h6 class="title">Phone</h6>
+                            <label for="phone_number">Number:</label>
+                            <input type="tel" id="phone_number">
+                            <label for="is_mobile">Is mobile:</label>
+                            <input type="checkbox" id="is_mobile">
+                        </div>
+                        <div id="address_section">
+                            <h6 class="title">Address</h6>
+                            <label for="city">City:</label>
+                            <input type="text" id="address">
+                            <label for="street">Street:</label>
+                            <input type="text" id="street">
+                            <label for="floor">Floor:</label>
+                            <input type="text" id="floor">
+                            <label for="postal">Postal:</label>
+                            <input type="text" id="postal">
+                            <label for="country">Country:</label>
+                            <input type="text" id="country"">
+                        </div>
+                    </div>
+                    <div id="venue_section">
+                        <h5 class="title">Venue</h5>
+                        <label for="location">Location:</label>
+                        <input type="text" id="location">
+                        <label for="size">Size:</label>
+                        <input type="text" id="size">
+                    </div>
+                    <p id="response_message"></p>
+                    <button onclick="${await createEvent()}">Create</button>
+                </section>
+            `;
+        }
+
         let mainSection;
         if (profileContent !== undefined)
             switch (profileContent) {
@@ -140,6 +198,10 @@ async function renderProfile(profileContent) {
                 }
                 case "FOLLOWINGS": {
                     mainSection = generateFollowingContent(user);
+                    break;
+                }
+                case "CREATE_EVENT": {
+                    mainSection = generateCreateEventContent();
                     break;
                 }
                 default: {
@@ -199,6 +261,9 @@ async function renderProfile(profileContent) {
                                 ${(user.authority !== "VENUE" ? `
                                 <a onclick="${await renderProfile("FOLLOWINGS")}">
                                     <p class="header_link_title">Followings</p>
+                                </a>
+                                <a onclick="${await renderProfile("CREATE_EVENT")}">
+                                    <p class="header_link_title">Create event</p>
                                 </a>
                                 ` : ``)}
                             </div>

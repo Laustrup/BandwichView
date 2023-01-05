@@ -153,7 +153,8 @@ async function editEvent(id) {
         postal = document.getElementById("postal").value,
         countryTitle = document.getElementById("country").value,
         location = document.getElementById("location").value,
-        size = document.getElementById("size").value;
+        size = document.getElementById("size").value,
+        isPublic = convertPlatoToAPI(booleanPlato(document.getElementById("public").value));
 
     //TODO Country details along rest of other event values
     const event = {
@@ -162,9 +163,8 @@ async function editEvent(id) {
         _openDoors: openDoors,
         _price: price,
         _ticketsURL: ticketsURL,
-        _firstname: firstname,
-        _lastname: lastname,
         _description: description,
+        _public: isPublic,
         _contactInfo: {
             _email: email,
             _phone: {
@@ -269,4 +269,78 @@ async function deleteUser(id) {
     else
         document.getElementById("user_delete_response_message").innerText =
             response._message === undefined ? "Something went wrong..." : response._message;
+}
+
+async function createEvent() {
+    const title = document.getElementById("title").value,
+        description = document.getElementById("description").value,
+        openDoors = document.getElementById("open_doors").value,
+        price = document.getElementById("price").value,
+        ticketsURL = document.getElementById("tickets_url").value,
+        email = document.getElementById("email").value,
+        number = document.getElementById("phone_number").value,
+        isMobile = document.getElementById("is_mobile").value,
+        city = document.getElementById("city").value,
+        street = document.getElementById("city").value,
+        floor = document.getElementById("floor").value,
+        postal = document.getElementById("postal").value,
+        countryTitle = document.getElementById("country").value,
+        location = document.getElementById("location").value,
+        size = document.getElementById("size").value,
+        isPublic = convertPlatoToAPI(booleanPlato(document.getElementById("public").value));
+
+    //TODO Country details along rest of other event values
+    const event = {
+        _id: id,
+        _title: title,
+        _openDoors: openDoors,
+        _price: price,
+        _ticketsURL: ticketsURL,
+        _description: description,
+        _public: isPublic,
+        _contactInfo: {
+            _email: email,
+            _phone: {
+                _country: {
+                    _title: countryTitle,
+                    _indexes: localStorage.getItem("user_" + id + "_phone_country_indexes"),
+                    _firstDigits: localStorage.getItem("user_" + id + "_phone_number_digits")
+                },
+                _numbers: number,
+                _isMobile: isMobile
+            },
+            _address: {
+                _city: city,
+                _street: street,
+                _floor: floor,
+                _postal: postal
+            },
+            _country: {
+                _title: countryTitle,
+                _indexes: localStorage.getItem("user_" + id + "_phone_country_indexes"),
+                _firstDigits: localStorage.getItem("user_" + id + "_phone_number_digits")
+            }
+        },
+        _requests: getRequests({id: "user_" + id}),
+        _location: location,
+        _size: size
+    };
+
+    const response = await (await (fetch(apiEventCreate, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
+    }))).json();
+
+    if (!response._error) {
+        window.location.href = eventURL(response._element._primaryId);
+        await renderMain();
+    }
+    else {
+        document.getElementById("response_message").innerText =
+            response._message === undefined ? "Something went wrong" : response._message;
+    }
 }

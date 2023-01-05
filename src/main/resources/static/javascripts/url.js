@@ -47,6 +47,7 @@ function apiCreateBand(password) {
 function apiEventGet(id) {
     return apiDomainURL + "event/get" + (id !== undefined ? "/" + id : "");
 }
+const apiEventCreate = apiDomainURL + "event/create";
 function apiEventUpdate() {
     return apiDomainURL + "event/update";
 }
