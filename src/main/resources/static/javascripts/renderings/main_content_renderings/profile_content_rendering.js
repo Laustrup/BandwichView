@@ -1,6 +1,4 @@
-async function renderProfile() {
-    let profileContent;
-
+async function renderProfile(profileContent) {
     function generateProfileContent(user) {
         function profileContentSection(mainSection) {
             return `
@@ -95,12 +93,12 @@ async function renderProfile() {
                         <h6 class="description">${request.event.title}</h6>
                         <p class="request_description">${request.message}</p>
                         <label for="${request.event.title}_approve">Approve</label>
-                        <input type="checkbox" id="${request.event.title}_approve" value="${request.approved}" onchange="${approveRequest(request)}">
+                        <input type="checkbox" id="${request.event.title}_approve" value="${request.approved.truth}" onchange="${approveRequest(request)}">
                     </div>
                 `;
             }
 
-            return user.requests.length > 0 ? `<h4>You don't have any requests at the moment...</h4>` : `
+            return user.requests.length > 0 ? `
                 <section id="requests_section">
                     <h4 class="title">Requests</h4>
                     <p id="request_message"></p>
@@ -109,7 +107,7 @@ async function renderProfile() {
                         ${content}
                     </div>
                 </section>
-            `;
+            ` : `<h4 class="title">You don't have any requests at the moment...</h4>`;
         }
 
         let mainSection;
@@ -145,13 +143,8 @@ async function renderProfile() {
                 }
             }
         else
-            mainSection = generateProfileEditingContent(user);
+            mainSection = generateBulletinContent(user.bulletins);
         return profileContentSection(mainSection);
-    }
-
-    async function changeProfileContent(content) {
-        profileContent = content;
-        await renderProfile();
     }
 
     if (!userIsLoggedIn())
@@ -171,39 +164,40 @@ async function renderProfile() {
                     </div>
                     <section id="profile_header_detail_section">
                         ${await generateImage({
-                            endpoint: user.albums[0]._items._data[1]._endpoint,
+                            endpoint: user.albums[0]._items._data[0]._endpoint,
                             class: "profile_image"
                         })}
                         <div>
                             <div id="profile_header_titles">
                                 <h2 id="profile_username_title" class="title">${user.username}</h2>
                                 <h3 id="profile_full_name_title" class="descritpion">${user.fullname}</h3>
+                                <p class="description">${user.description}</p>
                             </div>
                             <div id="profile_header_links">
-                                <a onclick="${await changeProfileContent("BULLETINS")}">
+                                <a onclick="${await renderProfile("BULLETINS")}">
                                     <p class="header_link_title">Bulletins</p>
                                 </a>
-                                <a onclick="${await changeProfileContent("ALBUMS")}">
+                                <a onclick="${await renderProfile("ALBUMS")}">
                                     <p class="header_link_title">Albums</p>
                                 </a>
-                                <a onclick="${await changeProfileContent("EDITING")}">
+                                <a onclick="${await renderProfile("EDITING")}">
                                     <p class="header_link_title">Editing</p>
                                 </a>
                                 ${(user.authority === "ARTIST" ? `
-                                <a onclick="${await changeProfileContent("BANDS")}">
+                                <a onclick="${await renderProfile("BANDS")}">
                                     <p class="header_link_title">Bands</p>
                                 </a>
-                                <a onclick="${await changeProfileContent("REQUESTS")}">
+                                <a onclick="${await renderProfile("REQUESTS")}">
                                     <p class="header_link_title">Requests</p>
                                 </a>
                                 ` : ``)}
                                 ${(user.authority !== "VENUE" ? `
-                                <a onclick="${await changeProfileContent("FOLLOWINGS")}">
+                                <a onclick="${await renderProfile("FOLLOWINGS")}">
                                     <p class="header_link_title">Followings</p>
                                 </a>
                                 ` : ``)}
                             </div>
-                            <div id="profile_header_right side">
+                            <div id="profile_header_right_side">
                                 <h4 class="title">Welcome to your profile</h4>
                                 <p class="description">
                                     Here you can view your information
@@ -244,7 +238,7 @@ function generateProfileTable(user) {
         <tr>
             <td>${user.username}</td>
             <td>${user.fullname}</td>
-            <td>${user.email}</td>
+            <td>${user.contactInfo.email}</td>
             <td>${user.contactInfo.phone.numbers}</td>
             <td>${user.contactInfo.address.street}, ${user.contactInfo.address.floor}. ${user.contactInfo.address.postal} ${user.contactInfo.address.city}</td>
             <td>${user.contactInfo.country.title}</td>

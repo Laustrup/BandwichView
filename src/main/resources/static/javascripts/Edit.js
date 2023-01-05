@@ -96,7 +96,8 @@ async function editUser() {
 }
 
 async function approveRequest(request) {
-    request.approved = !request.approved;
+    request.approved.argument = request.approved.argument === "TRUE" ? "FALSE" : "TRUE";
+    request.approved.truth = !request.argument.truth;
     let event = request.event;
     for (let i = 0; i < event.requests.length; i++) {
         if (event.requests.primaryId === request.primaryId && event.requests.secondaryId === request.secondaryId) {
@@ -117,5 +118,22 @@ async function approveRequest(request) {
         await updateSession();
     else
         document.getElementById("request_message").innerText = response._message === undefined ?
+            "Something went wrong..." : response._message;
+}
+
+async function changeParticipation(participation) {
+    const response = await (await fetch(apiParticipationUpsert(),{
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([participation])
+    }));
+
+    if (!response._error)
+        await updateSession();
+    else
+        document.getElementById("participation_request_message").innerText = response._message === undefined ?
             "Something went wrong..." : response._message;
 }

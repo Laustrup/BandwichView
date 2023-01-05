@@ -47,6 +47,9 @@ function apiEventGet(id) {
 function apiEventUpdate() {
     return apiDomainURL + "event/update";
 }
+function apiParticipationUpsert() {
+    return apiDomainURL + "event/upsert/participations";
+}
 
 async function changeURL(url) {
     window.location.href = url;

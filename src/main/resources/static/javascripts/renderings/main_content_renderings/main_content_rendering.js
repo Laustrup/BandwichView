@@ -37,7 +37,10 @@ async function renderMain() {
             break;
         }
         case (viewDomainURL + "/?event"): {
-            renderEvent(url[1]);
+            await renderEvent({
+                id: url[1],
+                doFetch: true
+            });
             break;
         }
         case (viewDomainURL + "/?user"): {
