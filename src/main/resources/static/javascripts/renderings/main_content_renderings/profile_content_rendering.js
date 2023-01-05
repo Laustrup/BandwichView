@@ -86,6 +86,32 @@ async function renderProfile() {
             return user.bands !== undefined ? userContainers(user.bands) : null;
         }
 
+        function generateRequestsContent(user) {
+            let content = ``;
+            for (let i = 0; i < user.requests.length; i++) {
+                const request = user.requests[i];
+                content += `
+                    <div class="request_section">
+                        <h6 class="description">${request.event.title}</h6>
+                        <p class="request_description">${request.message}</p>
+                        <label for="${request.event.title}_approve">Approve</label>
+                        <input type="checkbox" id="${request.event.title}_approve" value="${request.approved}" onchange="${approveRequest(request)}">
+                    </div>
+                `;
+            }
+
+            return user.requests.length > 0 ? `<h4>You don't have any requests at the moment...</h4>` : `
+                <section id="requests_section">
+                    <h4 class="title">Requests</h4>
+                    <p id="request_message"></p>
+                    <div id="description">
+                        <h5 class="title">These are your requests:</h5>
+                        ${content}
+                    </div>
+                </section>
+            `;
+        }
+
         let mainSection;
         if (profileContent !== undefined)
             switch (profileContent) {
@@ -103,6 +129,10 @@ async function renderProfile() {
                 }
                 case "BANDS": {
                     mainSection = generateProfileBandsContent(user)
+                    break;
+                }
+                case "REQUESTS": {
+                    mainSection = generateRequestsContent();
                     break;
                 }
                 case "FOLLOWINGS": {
@@ -162,6 +192,9 @@ async function renderProfile() {
                                 ${(user.authority === "ARTIST" ? `
                                 <a onclick="${await changeProfileContent("BANDS")}">
                                     <p class="header_link_title">Bands</p>
+                                </a>
+                                <a onclick="${await changeProfileContent("REQUESTS")}">
+                                    <p class="header_link_title">Requests</p>
                                 </a>
                                 ` : ``)}
                                 ${(user.authority !== "VENUE" ? `
@@ -238,4 +271,16 @@ function calculateTotalRatings(ratings) {
     for (let i = 0; i < ratings.length; i++)
         total += ratings[i].value;
     return total/ratings.length;
+}
+
+function renderUser(id) {
+    let html = ``;
+    if (userIsLoggedIn())
+        html = ``;
+    else
+        html = ``;
+
+    document.getElementById("main_content").innerHTML = `
+        ${html}
+    `;
 }

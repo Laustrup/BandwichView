@@ -46,27 +46,3 @@ async function renderMain() {
         }
     }
 }
-
-function renderEvent(id) {
-    let html = ``;
-    if (userIsLoggedIn())
-        html = ``;
-    else
-        html = ``;
-
-    document.getElementById("main_content").innerHTML = `
-        ${html}
-    `;
-}
-
-function renderUser(id) {
-    let html = ``;
-    if (userIsLoggedIn())
-        html = ``;
-    else
-        html = ``;
-
-    document.getElementById("main_content").innerHTML = `
-        ${html}
-    `;
-}

@@ -94,3 +94,28 @@ async function editUser() {
     else
         document.getElementById("editing_message").innerText = "Something went wrong..."
 }
+
+async function approveRequest(request) {
+    request.approved = !request.approved;
+    let event = request.event;
+    for (let i = 0; i < event.requests.length; i++) {
+        if (event.requests.primaryId === request.primaryId && event.requests.secondaryId === request.secondaryId) {
+            event.requests[i] = request;
+            break;
+        }
+    }
+    const response = await (await fetch(apiEventUpdate(),{
+        method: 'PATCH',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
+    }));
+
+    if (!response._error)
+        await updateSession();
+    else
+        document.getElementById("request_message").innerText = response._message === undefined ?
+            "Something went wrong..." : response._message;
+}
