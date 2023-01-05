@@ -26,6 +26,9 @@ const apiLoginURL = apiDomainURL + "user/login",
 function apiUserGetURL(id) {
     return apiDomainURL + "user/get/" + id;
 }
+function apiUserEditURL(update) {
+    return apiDomainURL + "user/update/" + update.username + "/" + update.confirmationPassword + "/" + update.newPassword;
+}
 function apiSearchURL(searchQuery) {
     return apiDomainURL + "user/search/" + searchQuery;
 }

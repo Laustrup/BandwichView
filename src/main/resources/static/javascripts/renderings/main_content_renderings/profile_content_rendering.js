@@ -2,28 +2,88 @@ async function renderProfile() {
     let profileContent;
 
     function generateProfileContent(user) {
-        function profileContentSection(item) {
+        function profileContentSection(mainSection) {
             return `
                 <section id="profile_content_left_section">
-                    
+                    ${generateProfileTable(user)}
                 </section>
                 <section id="profile_content_left_section">
-                    ${item.mainSection}
+                    ${mainSection}
                 </section>
             `;
         }
 
-        function generateProfileAlbumContent(user) {
-            const albums = user.albums;
-            return ``;
-        }
-
         function generateProfileEditingContent(user) {
-
+            return `
+                <section id="editing_section">
+                    <section id="editing_section_header">
+                        <h4 class="title">
+                            Feel free to edit your information.
+                        </h4>
+                        <p id="editing_message"></p>
+                    </section>
+                    <section id="editing_field_section">
+                        <div class="wrapper">
+                            <div id="name_editing">
+                                <h5 class="title">Name and description</h5>
+                                <label for="username">Username:</label>
+                                <input type="text" id="username" value="${user.username}">
+                                <label for="description">Description:</label>
+                                <input type="text" id="description" value="${user.description}">
+                                <label for="firstname">Firstname:</label>
+                                <input type="text" id="firstname" value="${user.firstname}">
+                                <label for="lastname">Lastname:</label>
+                                <input type="text" id="lastname" value="${user.lastname}">
+                            </div>
+                            <div id="contact_editing">
+                                <h5 class="title">Contact information</h5>
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" value="${user.contactInfo.email}">
+                                <div id="phone_editing">
+                                    <h6 class="title">Phone</h6>
+                                    <label for="phone_number">Number:</label>
+                                    <input type="tel" id="phone_number" value="${user.contactInfo.phone.numbers}">
+                                    <label for="is_mobile">Is mobile:</label>
+                                    <input type="checkbox" id="is_mobile" value="${user.contactInfo.phone.isMobile}">
+                                </div>
+                                <div id="address_editing">
+                                    <h6 class="title">Address</h6>
+                                    <label for="city">City:</label>
+                                    <input type="text" id="address" value="${user.contactInfo.address.city}">
+                                    <label for="street">Street:</label>
+                                    <input type="text" id="street" value="${user.contactInfo.address.street}">
+                                    <label for="floor">Floor:</label>
+                                    <input type="text" id="floor" value="${user.contactInfo.address.floor}">
+                                    <label for="postal">Postal:</label>
+                                    <input type="text" id="postal" value="${user.contactInfo.address.postal}">
+                                    <label for="country">Country:</label>
+                                    <input type="text" id="country" value="${user.contactInfo.country.title}">
+                                </div>
+                            </div>
+                            ${user.authority === "VENUE" ? `
+                            <div id="venue_editing">
+                            <h5 class="title">Venue</h5>
+                                <label for="location">Location:</label>
+                                <input type="text" id="location" value="${user.location}">
+                                <label for="size">Size:</label>
+                                <input type="text" id="size" value="${user.size}">
+                            </div>
+                            ` : ``}
+                            <div id="editing_confirmation">
+                                <label for="confirmation_password">Write your password:</label>
+                                <input type="password" id="confirmation_password" placeholder="********">
+                                <label for="new_password">New password:</label>
+                                <input type="password" id="new_password" placeholder="Leave empty if you wish to keep old">
+                                <button onclick="editUser()">Edit</button>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            `;
         }
 
         function generateProfileBandsContent(user) {
-
+            return user.bands !== undefined ? userContainers(user.bands) : null;
         }
 
         let mainSection;
@@ -34,7 +94,7 @@ async function renderProfile() {
                     break;
                 }
                 case "ALBUMS": {
-                    mainSection = generateProfileAlbumContent(user);
+                    mainSection = generateAlbumContainers(user);
                     break;
                 }
                 case "EDITING": {
@@ -56,10 +116,7 @@ async function renderProfile() {
             }
         else
             mainSection = generateProfileEditingContent(user);
-        return profileContentSection({
-            user: user,
-            mainSection: mainSection
-        });
+        return profileContentSection(mainSection);
     }
 
     async function changeProfileContent(content) {
@@ -131,4 +188,54 @@ async function renderProfile() {
         else
             await renderFrontpage("You are not logged in...");
     }
+}
+
+function generateProfileTable(user) {
+    const content = `
+        <tr>
+            <th>Username:</th>
+            <th>Full name:</th>
+            <th>Email:</th>
+            <th>Phone:</th>
+            <th>Address:</th>
+            <th>Country:</th>
+            <th>Profile created:</th>
+            ${user.ratings !== undefined && user.ratings.length > 0 ? `
+            <th>Total rating:</th>
+            ` : ``}
+            ${user.authority === "VENUE" ? `
+            <th>Location:</th>
+            <th>Size:</th>
+            ` : ``}
+        </tr>
+        <tr>
+            <td>${user.username}</td>
+            <td>${user.fullname}</td>
+            <td>${user.email}</td>
+            <td>${user.contactInfo.phone.numbers}</td>
+            <td>${user.contactInfo.address.street}, ${user.contactInfo.address.floor}. ${user.contactInfo.address.postal} ${user.contactInfo.address.city}</td>
+            <td>${user.contactInfo.country.title}</td>
+            <td>${user.timestamp.toLocaleString()}</td>
+            ${user.ratings !== undefined && user.ratings.length > 0 ? `
+            <td>${calculateTotalRatings(user.ratings)}</td>
+            ` : ``}
+            ${user.authority === "VENUE" ? `
+            <th>${user.location}</th>
+            <th>${user.size}</th>
+            ` : ``}
+        </tr>
+    `;
+
+    return `
+        <table id="profile_table">
+            ${content}
+        </table>
+    `;
+}
+
+function calculateTotalRatings(ratings) {
+    let total = 0;
+    for (let i = 0; i < ratings.length; i++)
+        total += ratings[i].value;
+    return total/ratings.length;
 }
