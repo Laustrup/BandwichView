@@ -17,7 +17,7 @@ async function renderMain() {
             break;
         }
         case profileURL: {
-            renderProfile();
+            await renderProfile();
             break;
         }
         case dashboardURL(): {
@@ -25,16 +25,15 @@ async function renderMain() {
             break;
         }
         case viewDomainURL + "/?chat_room": {
-            if (sessionStorage.getItem("logged_id") !== undefined)
+            if (userIsLoggedIn())
                 await renderChatRoom();
             else
                 return renderFrontpage("You need to log in for viewing chat room page");
             break;
         }
         case (dashboardURL() + "/?search_query"): {
-            if (sessionStorage.getItem("search") !== url[1])
-                search(url[1]);
-            renderDashboard();
+            await search(url[1]);
+            await renderDashboard();
             break;
         }
         case (viewDomainURL + "/?event"): {
@@ -50,7 +49,7 @@ async function renderMain() {
 
 function renderEvent(id) {
     let html = ``;
-    if (sessionStorage.getItem("logged_in") !== undefined)
+    if (userIsLoggedIn())
         html = ``;
     else
         html = ``;
@@ -62,7 +61,7 @@ function renderEvent(id) {
 
 function renderUser(id) {
     let html = ``;
-    if (sessionStorage.getItem("logged_in") !== undefined)
+    if (userIsLoggedIn())
         html = ``;
     else
         html = ``;

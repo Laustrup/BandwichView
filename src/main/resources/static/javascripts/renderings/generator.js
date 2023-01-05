@@ -166,10 +166,11 @@ function generateFilterSection() {
 }
 
 function generateIdolsContainers() { return userContainers(getIdols({id: "user_" + id })); }
+function generateFansContainers() { return userContainers(getFans({id: "user_" + id }))}
 
 function generateAttendingEventContainers() {
     return eventContainers({
-        events: getEvents({ id: "user_" + sessionStorage.getItem("user_id") }),
+        events: getEvents({ id: "user_" + localStorage.getItem("user_id") }),
         onlyOccurring: document.getElementById("onlyOccurring").value
     });
 }
@@ -205,13 +206,13 @@ function userContainers(users) {
 }
 
 function generateGigContainers() {
-    const gigs = getGigs({ id: "user_" + sessionStorage.getItem("user_id") });
+    const gigs = getGigs({ id: "user_" + localStorage.getItem("user_id") });
     gigs.filter((gig) => {
         return  Date.now().toEpochMilli() <= Date.parse((gig.start).toString()).toEpochMilli();
     });
 
     return generateItemContainers({
-        elements: getGigs({ id: "user_" + sessionStorage.getItem("user_id") }),
+        elements: getGigs({ id: "user_" + localStorage.getItem("user_id") }),
         kind: "GIGS"
     });
 }
@@ -231,6 +232,14 @@ function generateBulletinContent(bulletins) {
         kind: "BULLETINS"
     });
 }
+
+function generateAlbumContainers(user) {
+    return generateItemContainers({
+        elements: (user.albums !== undefined ? user.albums : user._albums),
+        kind: "ALBUMS"
+    })
+}
+
 
 function generateItemContainers(item) {
     let containers = ``;
@@ -265,37 +274,39 @@ function generateItemContainers(item) {
                         </p>
                         ` : ``)}
                     </a>` : (element.kind === "BULLETINS" ? 
-                        ((element.isSent !== undefined ? element.isSent : element._isSent) ? `
-                        ${generateImage({
-                            endpoint: (element._albums._data[0]._items._data[0]._endpoint !== undefined ?
-                                    element._albums._data[0]._items._data[0]._endpoint
-                                        : element.albums._data[0]._items._data[0]._endpoint),
-                            class: "bulletin_container_image"
-                            }
-                        )}
-                        <h5 class="${item.titleClassTag}">
-                            ${(element.author.username !== undefined ? element.author.username : element._author._username)}
-                        </h5>
-                        <p class="date_description">
-                            Written ${new Date((element.timestamp !== undefined ? element.timestamp : element._timestamp))}
-                        </p>
-                        <p class="bulletin_content">
-                            ${(element.content !== undefined ? element.content : element._content)}
-                        </p>
-                        ${(((element.isEdited !== undefined ? element.isEdited === "true" : element._isEdited === "true") ? `
-                        <p class="notifying_description">
-                            Is edited
-                        </p>
-                        ` : ``))}
-                        ` : ``) : element.kind === "GIGS" ? `
-                        <h5 class="container_title">${element.event.title}</h5>
-                        <p class="container_body_text">
-                            Gig begins at: ${new Date(element.start)}
-                        </p>
-                        <p class="container_body_text">
-                            Location: ${element.event.location}
-                        </p>
-                        ` : ``))}
+                    ((element.isSent !== undefined ? element.isSent : element._isSent) ? `
+                    ${generateImage({
+                        endpoint: (element._albums._data[0]._items._data[0]._endpoint !== undefined ?
+                                element._albums._data[0]._items._data[0]._endpoint
+                                    : element.albums._data[0]._items._data[0]._endpoint),
+                        class: "bulletin_container_image"
+                        }
+                    )}
+                    <h5 class="${item.titleClassTag}">
+                        ${(element.author.username !== undefined ? element.author.username : element._author._username)}
+                    </h5>
+                    <p class="date_description">
+                        Written ${new Date((element.timestamp !== undefined ? element.timestamp : element._timestamp))}
+                    </p>
+                    <p class="bulletin_content">
+                        ${(element.content !== undefined ? element.content : element._content)}
+                    </p>
+                    ${(((element.isEdited !== undefined ? element.isEdited === "true" : element._isEdited === "true") ? `
+                    <p class="notifying_description">
+                        Is edited
+                    </p>
+                    ` : ``))}
+                    ` : ``) : element.kind === "GIGS" ? `
+                    <h5 class="container_title">${element.event.title}</h5>
+                    <p class="container_body_text">
+                        Gig begins at: ${new Date(element.start)}
+                    </p>
+                    <p class="container_body_text">
+                        Location: ${element.event.location}
+                    </p>
+                    ` : (element.kind === "ALBUM" ?
+                    
+                    `` : ``)))}
                 </div>
             </div>
             `;
@@ -303,13 +314,57 @@ function generateItemContainers(item) {
     return containers;
 }
 
+function generateAlbumContent(album) {
+
+}
+
+function generateAlbumItemContent(image) {
+
+}
+
 function generateFollowingContent(user) {
-
+    return `
+        <section id="idols_section">
+        ${(user.idols.length > 0 ? `
+            <h3 class="title">
+                Idols:
+            </h3>
+            <div class="container_box">
+                <div class="wrapper">
+                    ${generateIdolsContainers()}
+                </div>
+            </div>
+        `: `
+            <h3 class="title">
+                At the moment you are not admiring any bands or artists...
+            </h3>
+            <p class="description">
+                Feel welcome to browse through the different musicians.
+            </p>
+        `)}
+    </section>
+    <section id="fans_section">
+        ${(user.fans.length > 0 ? `
+        <h3 class="title">
+            Fans:
+        </h3>
+        <div class="container_box">
+            <div class="wrapper">
+                ${generateFansContainers()}
+            </div>
+        </div>
+        ` : `
+        <h3 class="title">
+            At the moment you are not being admired by any fans...
+        </h3>
+        <p class="description">
+            Don't worry, they will come, if you start attending some events.
+        </p>
+        `)}
+    </section>
+    `;
 }
 
-function generateAlbumContainers(user) {
-
-}
 
 //TODO Implement image generating
 async function generateImage(item) {

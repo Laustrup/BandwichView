@@ -14,7 +14,8 @@ async function renderProfile() {
         }
 
         function generateProfileAlbumContent(user) {
-
+            const albums = user.albums;
+            return ``;
         }
 
         function generateProfileEditingContent(user) {

@@ -245,7 +245,7 @@ function renderSignupFields() {
             break;
         } case "BAND": {
             // TODO must only happen, if the logged in user is an Artist
-            if (sessionStorage.getItem("logged_in") !== undefined)
+            if (userIsLoggedIn())
                 document.getElementById("signup_fields").innerHTML = `
                 ${html}
 

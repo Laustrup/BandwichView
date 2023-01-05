@@ -1,4 +1,5 @@
-updateSession().then();
+if (userIsLoggedIn())
+    updateSession().then();
 
 async function login() {
     let username = document.getElementById("username").value;
@@ -30,7 +31,7 @@ async function login() {
         `;
     } else {
         saveUser(response);
-        sessionStorage.setItem("logged_in", "true")
+        localStorage.setItem("logged_in", "true")
         document.getElementById("response_message").innerHTML = `
             <p class="body_text">
                 Congrats ${response._username}. You have logged in!
@@ -40,7 +41,7 @@ async function login() {
     }
 }
 function logout() {
-    sessionStorage.clear();
+    localStorage.clear();
     document.getElementById("response_message").innerHTML = `
         <p class="body_text">
             You have logged out!
@@ -184,19 +185,22 @@ async function signup() {
             }
         }
         if (getUser() !== undefined) {
-            sessionStorage.setItem("logged_in", "true");
+            localStorage.setItem("logged_in", "true");
             window.location.href = profileURL();
         }
     }
 }
 
+
+
 async function updateSession() {
     const user = getUser();
     if (user !== undefined)
         saveUser((await (await fetch(apiUserGetURL(
-            sessionStorage.getItem("user")))).json())._element);
+            localStorage.getItem("user_id")
+        ))).json())._element);
 }
 
 function userIsLoggedIn() {
-    return sessionStorage.getItem("logged_in") === "true";
+    return localStorage.getItem("logged_in") === "true";
 }
