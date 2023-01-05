@@ -29,6 +29,8 @@ function apiUserGetURL(id) {
 function apiUserEditURL(update) {
     return apiDomainURL + "user/update/" + update.username + "/" + update.confirmationPassword + "/" + update.newPassword;
 }
+const apiUserFollowURL = apiDomainURL + "user/follow",
+    apiUserUnfollowURL = apiDomainURL + "user/unfollow";
 function apiUserDelete(id) {
     return apiDomainURL + "user/" + (id === undefined ? "delete" : id);
 }

@@ -217,7 +217,9 @@ async function renderProfile(profileContent) {
     if (!userIsLoggedIn())
         await renderFrontpage("You are not logged in...");
     else {
-        const user = getUser();
+        const splittedContent = profileContent.split("|");
+        const isNotLocalUser = splittedContent.length > 1;
+        const user = isNotLocalUser ? await (await fetch(apiUserGetURL(splittedContent[1]))).json()._element: getUser();
         if (user !== undefined) {
             document.getElementById("main_content").innerHTML = `
                 <section id="profile_header_section">
@@ -247,9 +249,11 @@ async function renderProfile(profileContent) {
                                 <a onclick="${await renderProfile("ALBUMS")}">
                                     <p class="header_link_title">Albums</p>
                                 </a>
-                                <a onclick="${await renderProfile("EDITING")}">
-                                    <p class="header_link_title">Editing</p>
-                                </a>
+                                ${isNotLocalUser ? `` : `
+                                    <a onclick="${await renderProfile("EDITING")}">
+                                        <p class="header_link_title">Editing</p>
+                                    </a>
+                                ` }
                                 ${(user.authority === "ARTIST" ? `
                                 <a onclick="${await renderProfile("BANDS")}">
                                     <p class="header_link_title">Bands</p>
@@ -262,17 +266,25 @@ async function renderProfile(profileContent) {
                                 <a onclick="${await renderProfile("FOLLOWINGS")}">
                                     <p class="header_link_title">Followings</p>
                                 </a>
-                                <a onclick="${await renderProfile("CREATE_EVENT")}">
-                                    <p class="header_link_title">Create event</p>
-                                </a>
+                                ${isNotLocalUser ? `` : `
+                                    <a onclick="${await renderProfile("CREATE_EVENT")}">
+                                        <p class="header_link_title">Create event</p>
+                                    </a>
+                                    `}
                                 ` : ``)}
                             </div>
                             <div id="profile_header_right_side">
+                                ${isNotLocalUser ? (doesFollowUser(user) ? `
+                                <button onclick="${unfollow([getUser(),user])}">Unfollow</button>
+                                ` : `
+                                <button onclick="${follow([getUser(),user])}">Follow</button>
+                                `) : `
                                 <h4 class="title">Welcome to your profile</h4>
                                 <p class="description">
                                     Here you can view your information
                                     and change them for your liking.
                                 </p>
+                                `}
                             </div>
                         </div>
                     </section> 
@@ -283,7 +295,7 @@ async function renderProfile(profileContent) {
             `;
         }
         else
-            await renderFrontpage("You are not logged in...");
+            await renderFrontpage(isNotLocalUser ? "Something went wrong" : "You are not logged in...");
     }
 }
 
@@ -337,14 +349,14 @@ function calculateTotalRatings(ratings) {
     return total/ratings.length;
 }
 
-function renderUser(id) {
-    let html = ``;
-    if (userIsLoggedIn())
-        html = ``;
-    else
-        html = ``;
+async function renderUser(id) {
+    await renderProfile("user|"+id)
+}
 
-    document.getElementById("main_content").innerHTML = `
-        ${html}
-    `;
+function doesFollowUser(interest) {
+    const user = getUser();
+    for (let i = 0; i < user.idols; i++)
+        if (user.idols[i].id === interest._primaryId)
+            return true;
+    return false;
 }

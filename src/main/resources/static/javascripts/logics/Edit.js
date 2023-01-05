@@ -344,3 +344,29 @@ async function createEvent() {
             response._message === undefined ? "Something went wrong" : response._message;
     }
 }
+
+async function follow(users) {
+    const response = await (await fetch(apiUserFollowURL,{
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(users)
+    }));
+
+    await renderUser(users[1]._primaryId);
+}
+
+async function unfollow(users) {
+    const response = await (await fetch(apiUserUnfollowURL,{
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(users)
+    }));
+
+    await renderUser(users[1]._primaryId);
+}
