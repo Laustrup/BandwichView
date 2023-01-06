@@ -9,7 +9,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function fetchImage(endpoint) {
-    const images = firebase.storage().ref().child('companyImages'), image = images.child('image1');
+    const images = firebase.storage().ref().child('Images'), image = images.child('image1');
 }
 
 async function uploadImage(image) {
