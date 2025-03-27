@@ -5,7 +5,7 @@ import './assets/main.css';
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-import router from './router'
+import router from './router/baseRoutes'
 import i18n from '@/_locals/vue-i18n.js'
 
 export default createApp(App)
