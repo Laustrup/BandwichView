@@ -1,0 +1,21 @@
+:root {
+  --bg: ghostwhite;
+  --color: darkslategray;
+  --code: tomato;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    --bg: ghostwhite;
+    --color: darkslategray;
+    --code: tomato;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --bg: darkslategray;
+    --color: ghostwhite;
+    --code: gold;
+  }
+}
