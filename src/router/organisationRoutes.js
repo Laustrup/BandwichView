@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import OrganisationView from '../views/OrganisationView.vue'
+import OrganisationView from '../views/organisationViews/OrganisationView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,7 +8,7 @@ const router = createRouter({
       path: '/organisations',
       name: 'organisations',
       // route level code-splitting for lazy loading
-      component: () => import('../views/OrganisationsView.vue'),
+      component: () => import('../views/organisationViews/OrganisationView.vue'),
     },
     {
       path: '/organisation/:id',
@@ -19,13 +19,13 @@ const router = createRouter({
     {
       path: '/organisation/:id/register',
       name: 'registerOrganisation',
-      component: () => import('../views/RegisterOrganisationView.vue'),
+      component: OrganisationView,
       props: true,
     },
     {
       path: '/organisation/:id/edit',
       name: 'editOrganisation',
-      component: () => import('../views/EditOrganisationView.vue'),
+      component: OrganisationView,
       props: true,
     },
   ],

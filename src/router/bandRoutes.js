@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import BandRegisterView from '../views/BandRegisterView.vue';
-import BandView from '../views/BandView.vue';
+import BandRegisterView from '../views/bandViews/BandRegisterView.vue';
+import BandView from '../views/bandViews/BandView.vue';
 // import BandEditView from '../views/BandEditView.vue';
 
 const router = createRouter({
@@ -10,7 +10,7 @@ const router = createRouter({
       path: '/bands',
       name: 'bands',
       // route level code-splitting for lazy loading
-      component: () => import('../views/BandsView.vue')
+      component: () => import('../views/bandViews/BandView.vue')
     },
     {
       path: '/band/register',
@@ -27,7 +27,7 @@ const router = createRouter({
     {
       path: '/band/:id/edit',
       name: 'editBand',
-      component: () => import('../views/EditBandView.vue'),
+      component: BandView,
       props: true
     }
   ]

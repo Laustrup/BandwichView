@@ -1,15 +1,14 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div>
+    <h1 class="mb-4">About page</h1>
+    <BCard title="Getting Started" class="mb-4">
+      <BCard-text>
+        Some other text to signify about-page
+      </BCard-text>
+    </BCard>
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
+<script setup>
+import { BCard } from 'bootstrap-vue-next'
+</script>
